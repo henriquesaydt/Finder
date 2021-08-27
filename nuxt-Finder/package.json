@@ -10,11 +10,16 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",
+    "@prisma/client": "^2.30.0",
+    "argon2": "^0.28.2",
     "core-js": "^3.15.1",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "nuxt": "^2.15.7"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^4.2.0",
-    "postcss": "^8.3.5"
+    "postcss": "^8.3.5",
+    "prisma": "^2.30.0"
   }
 }

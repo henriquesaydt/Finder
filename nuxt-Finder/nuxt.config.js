@@ -1,4 +1,12 @@
 export default {
+  server: {
+    host: '0.0.0.0',
+    port: 3000
+  },
+
+  serverMiddleware: [
+    '~/api/index.js'
+  ],
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'nuxt-Finder',

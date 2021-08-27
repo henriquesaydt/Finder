@@ -1,0 +1,244 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Evento {
+  id Int @id @default(autoincrement())
+  ativo Boolean @default(true)
+  nome String
+  descricao String?
+  data DateTime
+  localidade_x String @db.Char(11)
+  localidade_y String @db.Char(11)
+  localidade_r Int? @db.MediumInt
+
+  criado_em DateTime @default(now())
+  criado_por Int?
+  criado_ip String?
+
+  alterado_em DateTime @default(now())
+  alterado_por Int?
+  alterado_ip String?
+}
+
+model Pessoa {
+  id Int @id @default(autoincrement())
+  nome String
+  nascimento DateTime?
+  desaparecido Desaparecido?
+  user User?
+
+  criado_em DateTime @default(now())
+  criado_por Int?
+  criado_ip String?
+
+  alterado_em DateTime @default(now())
+  alterado_por Int?
+  alterado_ip String?
+}
+
+model Animal {
+  id Int @id @default(autoincrement())
+  nome String
+  tipo String
+  raca String?
+  desaparecido Desaparecido?
+
+  criado_em DateTime @default(now())
+  criado_por Int?
+  criado_ip String?
+
+  alterado_em DateTime @default(now())
+  alterado_por Int?
+  alterado_ip String?
+}
+
+model Desaparecido {
+  id Int @id @default(autoincrement())
+  is_animal Boolean @default(false)
+  pessoa Pessoa? @relation(fields: [pessoa_id], references: [id])
+  pessoa_id Int?
+  animal Animal? @relation(fields: [animal_id], references: [id])
+  animal_id Int?
+  historico Historico[]
+  caracteristicas Caracteristica[]
+  detalhes String?
+
+  criado_em DateTime @default(now())
+  criado_por Int?
+  criado_ip String?
+
+  alterado_em DateTime @default(now())
+  alterado_por Int?
+  alterado_ip String?
+}
+
+model Caracteristica {
+  id Int @id @default(autoincrement())
+  atributo Atributo @relation(fields: [atributo_id], references: [id])
+  atributo_id Int
+  desaparecido Desaparecido @relation(fields: [desaparecido_id], references: [id])
+  desaparecido_id Int
+  valor String
+
+  criado_em DateTime @default(now())
+  criado_por Int?
+  criado_ip String?
+
+  alterado_em DateTime @default(now())
+  alterado_por Int?
+  alterado_ip String?
+}
+
+model Atributo {
+  id Int @id @default(autoincrement())
+  is_animal Boolean @default(false)
+  nome String
+  caracteristica Caracteristica?
+
+  criado_em DateTime @default(now())
+  criado_por Int?
+  criado_ip String?
+
+  alterado_em DateTime @default(now())
+  alterado_por Int?
+  alterado_ip String?
+}
+
+model Historico {
+  id Int @id @default(autoincrement())
+  desaparecido Desaparecido @relation(fields: [desaparecido_id], references: [id])
+  desaparecido_id Int
+  encontrado Boolean
+  localizacao String?
+  estado String?
+
+  criado_em DateTime @default(now())
+  criado_por Int?
+  criado_ip String?
+
+  alterado_em DateTime @default(now())
+  alterado_por Int?
+  alterado_ip String?
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  pessoa Pessoa @relation(fields: [pessoaId], references: [id])
+  pessoaId Int
+  ativo Boolean @default(true)
+  username String @unique
+  password String
+  flags Int @default(0)
+  tokenWhiteList TokenWhiteList[]
+  grupoUsuario GrupoUsuario[]
+
+  criado_em DateTime @default(now())
+  criado_por Int?
+  criado_ip String?
+
+  alterado_em DateTime @default(now())
+  alterado_por Int?
+  alterado_ip String?
+}
+
+//Tokens habilitados para acesso
+model TokenWhiteList {
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+  expiraEm DateTime
+
+  criado_em DateTime @default(now())
+  criado_ip String?
+
+  alterado_em DateTime @default(now())
+  alterado_ip String?
+}
+
+//Grupos: Admin, usuario...
+model Grupo {
+  id Int @id @default(autoincrement())
+  ativo Boolean @default(true)
+  nome String
+  descricao String?
+  grupoAutorizacao GrupoAutorizacao[]
+  grupoUsuario GrupoUsuario[]
+
+  criado_em DateTime @default(now())
+  criado_por Int?
+  criado_ip String?
+
+  alterado_em DateTime @default(now())
+  alterado_por Int?
+  alterado_ip String?
+}
+
+//Recursos: Pessoa, Evento, Animal...
+model Recurso {
+  id Int @id @default(autoincrement())
+  ativo Boolean @default(true)
+  nome String
+  descricao String?
+  grupoAutorizacao GrupoAutorizacao[]
+
+  criado_em DateTime @default(now())
+  criado_por Int?
+  criado_ip String?
+
+  alterado_em DateTime @default(now())
+  alterado_por Int?
+  alterado_ip String?
+}
+
+//Permissões: Read, Write, Update, Delete
+model Permissao {
+  id Int @id @default(autoincrement())
+  nome String
+  descricao String?
+  grupoAutorizacao GrupoAutorizacao[]
+
+  criado_em DateTime @default(now())
+  criado_por Int?
+  criado_ip String?
+
+  alterado_em DateTime @default(now())
+  alterado_por Int?
+  alterado_ip String?
+}
+
+//Autorizações de cada grupo
+model GrupoAutorizacao {
+  id Int @id @default(autoincrement())
+  grupo Grupo @relation(fields: [grupoId], references: [id])
+  grupoId Int
+  recurso Recurso @relation(fields: [recursoId], references: [id])
+  recursoId Int
+  permissao Permissao @relation(fields: [permissaoId], references: [id])
+  permissaoId Int
+}
+
+//Usuários que pertencem aos grupos
+model GrupoUsuario {
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+  grupo Grupo @relation(fields: [grupoId], references: [id])
+  grupoId Int
+
+  criado_em DateTime @default(now())
+  criado_por Int?
+  criado_ip String?
+
+  alterado_em DateTime @default(now())
+  alterado_por Int?
+  alterado_ip String?
+}
