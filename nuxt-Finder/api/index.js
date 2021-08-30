@@ -1,21 +1,25 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 
+const cors = require('cors');
 const prisma = new PrismaClient();
 const app = express();
 const jwt = require('jsonwebtoken');
 const jwtSecret = '2T$Kjq8NW4g2T2&43Am2nH4Qt0Hp%l@1dq!y#30TZk0Nl7KSW0';
 const argon2 = require('argon2');
 
-const rotaTeste = express.Router();
-const routerPessoa = require('./routes/pessoa')
+//Importação das rotas
+const routerPessoa = require('./routes/pessoa');
+const routerAnimal = require('./routes/animal');
+const routerAtributo = require('./routes/atributo');
 
+app.use(cors());
 app.use(express.json());
-
 
 //Verifica o Token e retorna o ID do usuário para a rota
 function verifyJWT(req, res, next) {
-  const token = req.headers['authorization'];
+  var token = req.headers['authorization'];
+  token = token.split(" ")[1];
   if (!token) {
     return res.status(401).json({ message: 'Nenhum token fornecido' });
   }
@@ -37,15 +41,22 @@ function verifyJWT(req, res, next) {
   })
 }
 
+//Token contém: userId, tokenId
 app.post('/login', async (req, res, next) => {
   try {
+    console.log(req.body);
+    if (!req.body.username || !req.body.password) {
+      return res.status(500).json({
+        message: "Estrutura de login incorreta"
+      });
+    }
     const user = await prisma.user.findUnique({
       where: {
-        username: req.body.user
+        username: req.body.username
       }
     });
     if (user) {
-      const passValid = argon2.verify(user.password, req.body.password);
+      const passValid = await argon2.verify(user.password, req.body.password);
       if (passValid) {
         let expiration = 60 * 60 * 8; // Expiração do token, em segundos
         const whiteToken = await prisma.tokenWhiteList.create({
@@ -88,45 +99,9 @@ app.get('/logout', verifyJWT, async (req, res, next) => {
   return res.status(500).json({message: "Não foi possível concluir o logout"});
 });
 
-app.get('/secreto', verifyJWT, (req, res, next) => {
-  return res.status(200).json({
-    message: "bem-vindo",
-    token: req.token
-  });
-});
-
-rotaTeste.use((req, res, next) => {
-  req.authorizationId = 5;
-  next();
-});
-
-function autorizationMiddleware (req, res, next) {
-  if (req.authorizationId == 5 && req.method == 'POST') {
-    next();
-  }
-  else {
-    return res.status(403).json({
-      message: "não autorizado"
-    });
-  }
-}
-
-rotaTeste.get('/', autorizationMiddleware, (req, res) => {
-  return res.json({
-    message: "Bem-vindo",
-    idAutorizacao: req.authorizationId
-  })
-});
-
-rotaTeste.post('/', autorizationMiddleware, (req, res) => {
-  return res.json({
-    message: "Bem-vindo",
-    idAutorizacao: req.authorizationId
-  })
-});
-
-app.use('/teste', rotaTeste);
-app.use('/pessoa',verifyJWT, routerPessoa);
+app.use('/pessoa', verifyJWT, routerPessoa);
+app.use('/animal', verifyJWT, routerAnimal);
+app.use('/atributo', verifyJWT, routerAtributo)
 
 export default {
   path: '/api',

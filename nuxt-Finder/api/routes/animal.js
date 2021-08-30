@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 //ID do recurso no banco
-const recursoId = 1;
+const recursoId = 2;
 
 async function authorization (req, res, next) {
   var permissaoId = 0;
@@ -61,39 +61,67 @@ async function authorization (req, res, next) {
 //Querys: pesquisar
 router.get('/', authorization, async (req, res) => {
   try {
-    const pessoa = await prisma.pessoa.findMany({
-      where: {
-        nome: {
-          contains: req.query.pesquisar
+    var rows = null;
+    if (req.query.pesquisar == undefined) {
+      rows = await prisma.animal.findMany({
+        select: {
+          nome: true,
+          tipo: true,
+          raca: true
         }
-      },
-      select: {
-        id: true,
-        nome: true,
-        nascimento: true
-      }
-    });
-    if (pessoa) {
-      return res.json(pessoa);
+      });
+    }
+    else {
+      rows = await prisma.animal.findMany({
+        where: {
+          OR: [
+            {
+              nome: {
+                contains: req.query.pesquisar
+              }
+            },
+            {
+              tipo: {
+                contains: req.query.pesquisar
+              }
+            },
+            {
+              raca: {
+                contains: req.query.pesquisar
+              }
+            },
+          ],
+        },
+        select: {
+          nome: true,
+          tipo: true,
+          raca: true
+        }
+      });
+    }
+    if (rows) {
+      return res.json(rows);
     }
   }
-  catch {}
+  catch(err) {
+    console.log(err);
+  }
   return res.status(500).json({
     status: "error",
     message: "Não foi possível obter esse recurso"
   });
 });
 
-router.get('/:pessoaId', authorization, async (req, res) => {
-  var pessoaId = parseInt(req.params.pessoaId);
+router.get('/:animalId', authorization, async (req, res) => {
+  var animalId = parseInt(req.params.animalId);
   try {
-    const pessoa = await prisma.pessoa.findUnique({
+    const rows = await prisma.animal.findUnique({
       where: {
-        id: pessoaId
+        id: animalId
       }
     });
-    if (pessoa) {
-      return res.json(pessoa);
+    if (rows) {
+      return res.json(rows);
     }
   }
   catch {}
@@ -104,27 +132,30 @@ router.get('/:pessoaId', authorization, async (req, res) => {
 });
 
 router.post('/', authorization, async (req, res) => {
-  var newPessoa = {
+  var newAnimal = {
     nome: null,
-    nascimento: null
+    tipo: null,
+    raca: null
   }
-  if (req.body.nome) {
-    newPessoa.nome = req.body.nome;
-    if (req.body.nascimento) newPessoa.nascimento = req.body.nascimento;
+  if (req.body.nome && req.body.tipo) {
+    newAnimal.nome = req.body.nome;
+    newAnimal.tipo = req.body.tipo;
+    if (req.body.raca) newAnimal.raca = req.body.raca;
     try {
-      const pessoa = await prisma.pessoa.create({
+      const rows = await prisma.animal.create({
         data: {
-          nome: newPessoa.nome,
-          nascimento: new Date(newPessoa.nascimento),
+          nome: newAnimal.nome,
+          tipo: newAnimal.tipo,
+          raca: newAnimal.raca,
           criado_por: req.token.userId,
           criado_ip: req.ip
         }
       });
-      if (pessoa) {
+      if (rows) {
         return res.status(201).json({
           status: "success",
           message: "Recurso criado com sucesso",
-          pessoa: pessoa
+          animal: rows
         });
       }
     }
@@ -142,18 +173,18 @@ router.post('/', authorization, async (req, res) => {
 
 router.delete('/', authorization, async (req, res) => {
   if (req.body.id) {
-    var userId = parseInt(req.body.id);
+    var animalId = parseInt(req.body.id);
     try {
-      const pessoa = await prisma.pessoa.delete({
+      const rows = await prisma.animal.delete({
         where: {
-          id: userId
+          id: animalId
         }
       })
-      if (pessoa) {
+      if (rows) {
         return res.json({
           status: "success",
           message: "Recurso excluído com sucesso",
-          pessoa: pessoa
+          animal: rows
         })
       }
     }
@@ -172,30 +203,27 @@ router.delete('/', authorization, async (req, res) => {
 
 router.patch('/', authorization, async (req, res) => {
   if (req.body.id) {
-    var userId = parseInt(req.body.id);
-    var newPessoa = {
+    var animalId = parseInt(req.body.id);
+    var newAnimal = {
       alterado_por: req.token.userId,
       alterado_ip: req.ip,
       alterado_em: new Date(Date.now())
     }
-    if (req.body.nome) {
-      newPessoa.nome = req.body.nome
-    }
-    if (req.body.nascimento) {
-      newPessoa.nascimento = new Date(req.body.nascimento);
-    }
+    if (req.body.nome) newAnimal.nome = req.body.nome;
+    if (req.body.tipo) newAnimal.tipo = req.body.tipo;
+    if (req.body.raca) newAnimal.raca = req.body.raca;
     try {
-      const pessoa = await prisma.pessoa.update({
+      const rows = await prisma.animal.update({
         where: {
-          id: userId
+          id: animalId
         },
-        data: newPessoa
+        data: newAnimal
       })
-      if (pessoa) {
+      if (rows) {
         return res.json({
           status: "success",
           message: "Recurso atualizado com sucesso",
-          pessoa: pessoa
+          animal: rows
         })
       }
     }
