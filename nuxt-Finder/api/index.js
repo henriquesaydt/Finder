@@ -12,6 +12,7 @@ const argon2 = require('argon2');
 const routerPessoa = require('./routes/pessoa');
 const routerAnimal = require('./routes/animal');
 const routerAtributo = require('./routes/atributo');
+const routerUser = require('./routes/user');
 
 app.use(cors());
 app.use(express.json());
@@ -19,7 +20,14 @@ app.use(express.json());
 //Verifica o Token e retorna o ID do usuário para a rota
 function verifyJWT(req, res, next) {
   var token = req.headers['authorization'];
-  token = token.split(" ")[1];
+  try {
+    token = token.split(" ")[1];
+  }
+  catch {
+    return res.status(500).json({
+      message: 'Formato do token inválido'
+    });
+  }
   if (!token) {
     return res.status(401).json({ message: 'Nenhum token fornecido' });
   }
@@ -44,7 +52,6 @@ function verifyJWT(req, res, next) {
 //Token contém: userId, tokenId
 app.post('/login', async (req, res, next) => {
   try {
-    console.log(req.body);
     if (!req.body.username || !req.body.password) {
       return res.status(500).json({
         message: "Estrutura de login incorreta"
@@ -101,7 +108,8 @@ app.get('/logout', verifyJWT, async (req, res, next) => {
 
 app.use('/pessoa', verifyJWT, routerPessoa);
 app.use('/animal', verifyJWT, routerAnimal);
-app.use('/atributo', verifyJWT, routerAtributo)
+app.use('/atributo', verifyJWT, routerAtributo);
+app.use('/user', verifyJWT, routerUser);
 
 export default {
   path: '/api',
