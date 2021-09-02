@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
+const argon2 = require('argon2');
 
 //ID do recurso no banco
 const recursoId = 4;
@@ -109,12 +110,30 @@ router.get('/', authorization, async (req, res) => {
   });
 });
 
-router.get('/:atributoId', authorization, async (req, res) => {
+router.get('/:userId', authorization, async (req, res) => {
   try {
-    var atributoId = parseInt(req.params.atributoId);
-    const rows = await prisma.atributo.findUnique({
+    var userId = parseInt(req.params.userId);
+    const rows = await prisma.user.findUnique({
       where: {
-        id: atributoId
+        id: userId
+      },
+      select: {
+        id: true,
+        pessoa: {
+          select: {
+            id: true,
+            nome: true
+          }
+        },
+        ativo: true,
+        username: true,
+        flags: true,
+        criado_em: true,
+        criado_por: true,
+        criado_ip: true,
+        alterado_em: true,
+        alterado_por: true,
+        alterado_ip: true
       }
     });
     if (rows) {
@@ -129,18 +148,22 @@ router.get('/:atributoId', authorization, async (req, res) => {
 });
 
 router.post('/', authorization, async (req, res) => {
-  var newAtributo = {
-    nome: null,
-    is_animal: null
+  var newUser = {
+    pessoaId: null,
+    username: null,
+    password: null
+    
   }
-  if (req.body.nome && req.body.hasOwnProperty("is_animal")) {
-    newAtributo.nome = req.body.nome;
-    newAtributo.is_animal = req.body.is_animal;
+  if (req.body.pessoaId && req.body.username && req.body.password) {
+    newUser.pessoaId = req.body.pessoaId;
+    newUser.username = req.body.username;
+    newUser.password = await argon2.hash(req.body.password);
     try {
-      const rows = await prisma.atributo.create({
+      const rows = await prisma.user.create({
         data: {
-          nome: newAtributo.nome,
-          is_animal: newAtributo.is_animal,
+          pessoaId: newUser.pessoaId,
+          username: newUser.username,
+          password: newUser.password,
           criado_por: req.token.userId,
           criado_ip: req.ip
         }
@@ -169,11 +192,29 @@ router.post('/', authorization, async (req, res) => {
 
 router.delete('/', authorization, async (req, res) => {
   if (req.body.id) {
-    var atributoId = parseInt(req.body.id);
+    var userId = parseInt(req.body.id);
     try {
-      const rows = await prisma.atributo.delete({
+      const rows = await prisma.user.delete({
         where: {
-          id: atributoId
+          id: userId
+        },
+        select: {
+          id: true,
+          pessoa: {
+            select: {
+              id: true,
+              nome: true
+            }
+          },
+          ativo: true,
+          username: true,
+          flags: true,
+          criado_em: true,
+          criado_por: true,
+          criado_ip: true,
+          alterado_em: true,
+          alterado_por: true,
+          alterado_ip: true
         }
       })
       if (rows) {
@@ -181,15 +222,16 @@ router.delete('/', authorization, async (req, res) => {
           status: "success",
           message: "Recurso excluído com sucesso",
           animal: rows
-        })
+        });
       }
     }
-    catch {
-      return res.status(500).json({
-        status: "error",
-        message: "Não foi possível excluir esse recurso"
-      });
+    catch (err) {
+      console.log(err);
     }
+    return res.status(500).json({
+      status: "error",
+      message: "Não foi possível excluir esse recurso"
+    });
   }
   return res.status(400).json({
     status: "error",
@@ -199,20 +241,42 @@ router.delete('/', authorization, async (req, res) => {
 
 router.patch('/', authorization, async (req, res) => {
   if (req.body.id) {
-    var atributoId = parseInt(req.body.id);
-    var newAtributo = {
+    var userId = parseInt(req.body.id);
+    var newUser = {
+      pessoaId: undefined,
+      username: undefined,
+      password: undefined,
       alterado_por: req.token.userId,
       alterado_ip: req.ip,
       alterado_em: new Date(Date.now())
     }
-    if (req.body.nome) newAtributo.nome = req.body.nome;
-    if (req.body.is_animal) newAtributo.is_animal = req.body.is_animal;
+    if (req.body.pessoaId) newUser.pessoaId = req.body.pessoaId;
+    if (req.body.username) newUser.username = req.body.username;
+    if (req.body.password) newUser.password = await argon2.hash(req.body.password);
     try {
-      const rows = await prisma.atributo.update({
+      const rows = await prisma.user.update({
         where: {
-          id: atributoId
+          id: userId
         },
-        data: newAtributo
+        data: newUser,
+        select: {
+          id: true,
+          pessoa: {
+            select: {
+              id: true,
+              nome: true
+            }
+          },
+          ativo: true,
+          username: true,
+          flags: true,
+          criado_em: true,
+          criado_por: true,
+          criado_ip: true,
+          alterado_em: true,
+          alterado_por: true,
+          alterado_ip: true
+        }
       })
       if (rows) {
         return res.json({
@@ -222,7 +286,9 @@ router.patch('/', authorization, async (req, res) => {
         })
       }
     }
-    catch {}
+    catch (err) {
+      console.log(err);
+    }
     return res.status(500).json({
       status: "error",
       message: "Não foi possível atualizar esse recurso"
