@@ -13,6 +13,7 @@ const routerPessoa = require('./routes/pessoa');
 const routerAnimal = require('./routes/animal');
 const routerAtributo = require('./routes/atributo');
 const routerUser = require('./routes/user');
+const routerEvento = require('./routes/evento');
 
 app.use(cors());
 app.use(express.json());
@@ -110,6 +111,7 @@ app.use('/pessoa', verifyJWT, routerPessoa);
 app.use('/animal', verifyJWT, routerAnimal);
 app.use('/atributo', verifyJWT, routerAtributo);
 app.use('/user', verifyJWT, routerUser);
+app.use('/evento', verifyJWT, routerEvento);
 
 export default {
   path: '/api',

@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 //ID do recurso no banco
-const recursoId = 1;
+const recursoId = 5;
 
 async function authorization (req, res, next) {
   var permissaoId = 0;
@@ -60,43 +60,61 @@ async function authorization (req, res, next) {
 
 //Querys: pesquisar
 router.get('/', authorization, async (req, res) => {
+  var rows = null;
+  const select = {
+    id: true,
+    ativo: true,
+    nome: true,
+    descricao: true,
+    data: true,
+    localidade_x: true,
+    localidade_y: true,
+    localidade_r: true,
+    endereco: true,
+    bairro: true,
+    cidade: true,
+    desaparecidos: true
+  }
   try {
-    const pessoa = await prisma.pessoa.findMany({
-      where: {
-        nome: {
-          contains: req.query.pesquisar
-        }
-      },
-      select: {
-        id: true,
-        nome: true,
-        nascimento: true
-      }
-    });
-    if (pessoa) {
-      return res.json(pessoa);
+    if (req.query.pesquisar) {
+      rows = await prisma.evento.findMany({
+        where: {
+          nome: req.query.pesquisar
+        },
+        select: select
+      });
+    }
+    else {
+      rows = await prisma.evento.findMany({
+        select: select
+      });
+    }
+    if (rows) {
+      return res.json(rows);
     }
   }
-  catch {}
+  catch (err) {}
   return res.status(500).json({
     status: "error",
     message: "Não foi possível obter esse recurso"
   });
 });
 
-router.get('/:pessoaId', authorization, async (req, res) => {
-  var pessoaId = parseInt(req.params.pessoaId);
+router.get('/:eventoId', authorization, async (req, res) => {
   try {
-    const pessoa = await prisma.pessoa.findUnique({
+    var eventoId = parseInt(req.params.eventoId);
+    const rows = await prisma.evento.findUnique({
       where: {
-        id: pessoaId
+        id: eventoId
       }
     });
-    if (pessoa) {
-      return res.json(pessoa);
+    if (rows) {
+      return res.json(rows);
     }
   }
-  catch {}
+  catch (err) {
+    console.log(err);
+  }
   return res.status(500).json({
     status: "error",
     message: "Não foi possível obter esse recurso"
@@ -104,65 +122,72 @@ router.get('/:pessoaId', authorization, async (req, res) => {
 });
 
 router.post('/', authorization, async (req, res) => {
-  var newPessoa = {
-    nome: null,
-    nascimento: null
+  var newEvento = {
+    ativo: req.body.ativo,
+    nome: req.body.nome,
+    descricao: req.body.descricao,
+    data: req.body.data,
+    localidade_x: req.body.localidade_x,
+    localidade_y: req.body.localidade_y,
+    localidade_r: req.body.localidade_r,
+    endereco: req.body.endereco,
+    bairro: req.body.bairro,
+    cidade: req.body.cidade
   }
-  if (req.body.nome) {
-    newPessoa.nome = req.body.nome;
-    if (req.body.nascimento) newPessoa.nascimento = req.body.nascimento;
+
+  if (req.body.nome && ((newEvento.localidade_x && newEvento.localidade_y) || (newEvento.endereco && newEvento.bairro && newEvento.cidade))) {
     try {
-      const pessoa = await prisma.pessoa.create({
-        data: {
-          nome: newPessoa.nome,
-          nascimento: new Date(newPessoa.nascimento),
-          criado_por: req.token.userId,
-          criado_ip: req.ip
-        }
+      const rows = await prisma.evento.create({
+        data: newEvento
       });
-      if (pessoa) {
+      if (rows) {
         return res.status(201).json({
           status: "success",
           message: "Recurso criado com sucesso",
-          recurso: pessoa
+          recurso: rows
         });
       }
     }
-    catch {}
+    catch (err) {
+      console.log(err);
+    }
     return res.status(500).json({
       status: "error",
       message: "Não foi possível criar esse recurso"
     });
   }
-  return res.status(400).json({
-    status: "error",
-    message: "Parâmetros inválidos"
-  });
+  else {
+    return res.status(400).json({
+      status: "error",
+      message: "Parâmetros inválidos"
+    });
+  }
 });
 
 router.delete('/', authorization, async (req, res) => {
   if (req.body.id) {
-    var userId = parseInt(req.body.id);
+    var eventoId = parseInt(req.body.id);
     try {
-      const pessoa = await prisma.pessoa.delete({
+      const rows = await prisma.evento.delete({
         where: {
-          id: userId
+          id: eventoId
         }
       })
-      if (pessoa) {
+      if (rows) {
         return res.json({
           status: "success",
           message: "Recurso excluído com sucesso",
-          recurso: pessoa
-        })
+          animal: rows
+        });
       }
     }
-    catch {
-      return res.status(500).json({
-        status: "error",
-        message: "Não foi possível excluir esse recurso"
-      });
+    catch (err) {
+      console.log(err);
     }
+    return res.status(500).json({
+      status: "error",
+      message: "Não foi possível excluir esse recurso"
+    });
   }
   return res.status(400).json({
     status: "error",
@@ -172,40 +197,45 @@ router.delete('/', authorization, async (req, res) => {
 
 router.patch('/', authorization, async (req, res) => {
   if (req.body.id) {
-    var userId = parseInt(req.body.id);
-    var newPessoa = {
+    var eventoId = parseInt(req.body.id);
+    var newEvento = {
+      ativo: req.body.ativo,
+      nome: req.body.nome,
+      descricao: req.body.descricao,
+      data: req.body.data,
+      localidade_x: req.body.localidade_x,
+      localidade_y: req.body.localidade_y,
+      localidade_r: req.body.localidade_r,
+      endereco: req.body.endereco,
+      bairro: req.body.bairro,
+      cidade: req.body.cidade,
       alterado_por: req.token.userId,
       alterado_ip: req.ip,
       alterado_em: new Date(Date.now())
     }
-    if (req.body.nome) {
-      newPessoa.nome = req.body.nome
-    }
-    if (req.body.nascimento) {
-      newPessoa.nascimento = new Date(req.body.nascimento);
-    }
+
     try {
-      const pessoa = await prisma.pessoa.update({
+      const rows = await prisma.evento.update({
         where: {
-          id: userId
+          id: eventoId
         },
-        data: newPessoa
+        data: newEvento,
       })
-      if (pessoa) {
+      if (rows) {
         return res.json({
           status: "success",
           message: "Recurso atualizado com sucesso",
-          recurso: pessoa
+          animal: rows
         })
       }
     }
-    catch(err) {
+    catch (err) {
       console.log(err);
-      return res.status(500).json({
-        status: "error",
-        message: "Não foi possível atualizar esse recurso"
-      });
     }
+    return res.status(500).json({
+      status: "error",
+      message: "Não foi possível atualizar esse recurso"
+    });
   }
   return res.status(400).json({
     status: "error",

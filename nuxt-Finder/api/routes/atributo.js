@@ -124,7 +124,7 @@ router.post('/', authorization, async (req, res) => {
         return res.status(201).json({
           status: "success",
           message: "Recurso criado com sucesso",
-          animal: rows
+          recurso: rows
         });
       }
     }
@@ -155,7 +155,7 @@ router.delete('/', authorization, async (req, res) => {
         return res.json({
           status: "success",
           message: "Recurso excluído com sucesso",
-          animal: rows
+          recurso: rows
         })
       }
     }
@@ -193,7 +193,7 @@ router.patch('/', authorization, async (req, res) => {
         return res.json({
           status: "success",
           message: "Recurso atualizado com sucesso",
-          animal: rows
+          recurso: rows
         })
       }
     }

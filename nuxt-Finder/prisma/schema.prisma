@@ -10,15 +10,22 @@ generator client {
   provider = "prisma-client-js"
 }
 
+//TODO ROTA
 model Evento {
   id Int @id @default(autoincrement())
   ativo Boolean @default(true)
   nome String
   descricao String?
-  data DateTime
-  localidade_x String @db.Char(11)
-  localidade_y String @db.Char(11)
+  data DateTime @default(now())
+
+  localidade_x String? @db.Char(11)
+  localidade_y String? @db.Char(11)
   localidade_r Int? @db.MediumInt
+  endereco String?
+  bairro String?
+  cidade String?
+
+  desaparecidos Desaparecido[]
 
   criado_em DateTime @default(now())
   criado_por Int?
@@ -61,6 +68,7 @@ model Animal {
   alterado_ip String?
 }
 
+//TODO ROTA
 model Desaparecido {
   id Int @id @default(autoincrement())
   is_animal Boolean @default(false)
@@ -71,6 +79,8 @@ model Desaparecido {
   historico Historico[]
   caracteristicas Caracteristica[]
   detalhes String?
+  evento Evento @relation(fields: [eventoId], references: [id])
+  eventoId Int
 
   criado_em DateTime @default(now())
   criado_por Int?
@@ -81,6 +91,7 @@ model Desaparecido {
   alterado_ip String?
 }
 
+//TODO ROTA
 model Caracteristica {
   id Int @id @default(autoincrement())
   atributo Atributo @relation(fields: [atributo_id], references: [id])
@@ -113,6 +124,7 @@ model Atributo {
   alterado_ip String?
 }
 
+//TODO ROTA
 model Historico {
   id Int @id @default(autoincrement())
   desaparecido Desaparecido @relation(fields: [desaparecido_id], references: [id])
