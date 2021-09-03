@@ -10,7 +10,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-//TODO ROTA
 model Evento {
   id Int @id @default(autoincrement())
   ativo Boolean @default(true)
@@ -81,6 +80,7 @@ model Desaparecido {
   detalhes String?
   evento Evento @relation(fields: [eventoId], references: [id])
   eventoId Int
+  encontrado Boolean @default(false)
 
   criado_em DateTime @default(now())
   criado_por Int?
