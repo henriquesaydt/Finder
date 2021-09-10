@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 //ID do recurso no banco
-const recursoId = 6;
+const recursoId = 7;
 
 async function authorization (req, res, next) {
   var permissaoId = 0;
@@ -63,25 +63,11 @@ router.get('/', authorization, async (req, res) => {
   var rows = null;
   try {
     if (req.query.pesquisar) {
-      rows = await prisma.desaparecido.findMany({
+      rows = await prisma.caracteristica.findMany({
         where: {
-          OR: [
-            {
-              pessoa: {
-                nome: req.query.pesquisar
-              }
-            },
-            {
-              animal: {
-                nome: req.query.pesquisar
-              }
-            }
-          ]
+          valor: req.query.pesquisar
         }
       });
-    }
-    else {
-      rows = await prisma.desaparecido.findMany();
     }
     if (rows) {
       return res.json(rows);
@@ -94,12 +80,12 @@ router.get('/', authorization, async (req, res) => {
   });
 });
 
-router.get('/:desaparecidoId', authorization, async (req, res) => {
+router.get('/:caracteristicaId', authorization, async (req, res) => {
   try {
-    var desaparecidoId = parseInt(req.params.desaparecidoId);
-    const rows = await prisma.desaparecido.findUnique({
+    var caracteristicaId = parseInt(req.params.caracteristicaId);
+    const rows = await prisma.caracteristica.findUnique({
       where: {
-        id: desaparecidoId
+        id: caracteristicaId
       }
     });
     if (rows) {
@@ -116,21 +102,18 @@ router.get('/:desaparecidoId', authorization, async (req, res) => {
 });
 
 router.post('/', authorization, async (req, res) => {
-  var newDesaparecido = {
-    is_animal: req.body.is_animal,
-    pessoa_id: req.body.pessoa_id,
-    animal_id: req.body.animal_id,
-    detalhes: req.body.detalhes,
-    eventoId: req.body.eventoId,
-    encontrado: req.body.encontrado,
+  var newCaracteristica = {
+    atributo_id: req.token.atributo_id,
+    desaparecido_id: req.token.desaparecido_id,
+    valor: req.token.valor,
     criado_por: req.token.userId,
     criado_ip: req.ip
   }
 
-  if (newDesaparecido.eventoId && ((newDesaparecido.pessoa_id && !newDesaparecido.animal_id) || (!newDesaparecido.pessoa_id && newDesaparecido.animal_id))) {
+  if (newCaracteristica.atributo_id && newCaracteristica.desaparecido_id && newCaracteristica.valor ) {
     try {
-      const rows = await prisma.desaparecido.create({
-        data: newDesaparecido
+      const rows = await prisma.caracteristica.create({
+        data: newCaracteristica
       });
       if (rows) {
         return res.status(201).json({
@@ -158,11 +141,11 @@ router.post('/', authorization, async (req, res) => {
 
 router.delete('/', authorization, async (req, res) => {
   if (req.body.id) {
-    var desaparecidoId = parseInt(req.body.id);
+    var caracteristicaId = parseInt(req.body.id);
     try {
-      const rows = await prisma.desaparecido.delete({
+      const rows = await prisma.caracteristica.delete({
         where: {
-          id: desaparecidoId
+          id: caracteristicaId
         }
       });
       if (rows) {
@@ -189,25 +172,22 @@ router.delete('/', authorization, async (req, res) => {
 
 router.patch('/', authorization, async (req, res) => {
   if (req.body.id) {
-    var desaparecidoId = parseInt(req.body.id);
-    var newDesaparecido = {
-      is_animal: req.body.is_animal,
-      pessoa_id: req.body.pessoa_id,
-      animal_id: req.body.animal_id,
-      detalhes: req.body.detalhes,
-      eventoId: req.body.eventoId,
-      encontrado: req.body.encontrado,
+    var caracteristicaId = parseInt(req.body.id);
+    var newCaracteristica = {
+      atributo_id: req.token.atributo_id,
+      desaparecido_id: req.token.desaparecido_id,
+      valor: req.token.valor,
       alterado_por: req.token.userId,
       alterado_ip: req.ip
     }
 
-    if (newDesaparecido.eventoId && ((newDesaparecido.pessoa_id && !newDesaparecido.animal_id) || (!newDesaparecido.pessoa_id && newDesaparecido.animal_id))) {
+    if (newCaracteristica.atributo_id && newCaracteristica.desaparecido_id && newCaracteristica.valor ) {
       try {
-        const rows = await prisma.desaparecido.update({
+        const rows = await prisma.caracteristica.update({
           where: {
-            id: desaparecidoId
+            id: caracteristicaId
           },
-          data: newDesaparecido,
+          data: newCaracteristica,
         })
         if (rows) {
           return res.json({

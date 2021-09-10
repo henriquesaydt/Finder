@@ -15,6 +15,7 @@ const routerAtributo = require('./routes/atributo');
 const routerUser = require('./routes/user');
 const routerEvento = require('./routes/evento');
 const routerDesaparecido = require('./routes/desaparecido');
+const routerCaracteristica = require('./routes/caracteristica')
 
 app.use(cors());
 app.use(express.json());
@@ -114,6 +115,7 @@ app.use('/atributo', verifyJWT, routerAtributo);
 app.use('/user', verifyJWT, routerUser);
 app.use('/evento', verifyJWT, routerEvento);
 app.use('/desaparecido', verifyJWT, routerDesaparecido);
+app.use('/caracteristica', verifyJWT, routerCaracteristica)
 
 export default {
   path: '/api',

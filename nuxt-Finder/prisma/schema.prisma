@@ -67,7 +67,6 @@ model Animal {
   alterado_ip String?
 }
 
-//TODO ROTA
 model Desaparecido {
   id Int @id @default(autoincrement())
   is_animal Boolean @default(false)
@@ -91,7 +90,6 @@ model Desaparecido {
   alterado_ip String?
 }
 
-//TODO ROTA
 model Caracteristica {
   id Int @id @default(autoincrement())
   atributo Atributo @relation(fields: [atributo_id], references: [id])
