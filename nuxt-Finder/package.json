@@ -20,8 +20,10 @@
     "nuxt": "^2.15.7"
   },
   "devDependencies": {
-    "@nuxtjs/tailwindcss": "^4.2.0",
-    "postcss": "^8.3.5",
-    "prisma": "^2.30.0"
+    "@nuxtjs/tailwindcss": "^4.2.1",
+    "autoprefixer": "^10.3.4",
+    "postcss": "^8.3.6",
+    "prisma": "^2.30.0",
+    "tailwindcss": "^2.2.15"
   }
 }
