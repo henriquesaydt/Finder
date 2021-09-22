@@ -2,15 +2,17 @@
   <nav class="p-1" style="background-color: #334259">
     <div class="flex space-x-10 px-7 py-2 justify-between">
       <!-- LOGO/NOME -->
-      <div class="flex items-center space-x-20">
-        <a href="#" class="flex items-center space-x-1">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-auto" viewBox="0 0 20 20" fill="white">
-            <path d="M9 9a2 2 0 114 0 2 2 0 01-4 0z" />
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a4 4 0 00-3.446 6.032l-2.261 2.26a1 1 0 101.414 1.415l2.261-2.261A4 4 0 1011 5z" clip-rule="evenodd" />
-          </svg>
-          <span class="text-white text-5xl font-semibold">
-            Finder
-          </span>
+      <div class="flex space-x-20">
+        <a href="#">
+          <div class="flex items-center space-x-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-auto" viewBox="0 0 20 20" fill="white">
+              <path d="M9 9a2 2 0 114 0 2 2 0 01-4 0z" />
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a4 4 0 00-3.446 6.032l-2.261 2.26a1 1 0 101.414 1.415l2.261-2.261A4 4 0 1011 5z" clip-rule="evenodd" />
+            </svg>
+            <span class="text-white text-5xl font-semibold">
+              Finder
+            </span>
+          </div>
         </a>
 
         <div class="hidden md:flex items-center space-x-7 text-2xl font-medium">
@@ -45,12 +47,12 @@
         </template>
       </MjPopover>
 
-      <button class=" rounded-lg bg-white text-black px-5 text-lg" @click="$refs.modalLogin.open()">
+      <button class=" rounded-lg bg-white text-grey-800 font-medium px-5 text-lg" @click="$refs.modalLogin.open()">
         Login
       </button>
 
       <MjModal ref="modalLogin" class="">
-        <form class="flex flex-col space-y-3 py-3 lg:w-3/4 lg:mx-auto grid gap-4">
+        <form class="flex flex-col space-y-3 py-3 lg:w-3/4 lg:mx-auto grid gap-4 font-medium">
           <div class="flex flex-col space-y-2">
             <p class="text-gray-800">
               Usuário
@@ -67,15 +69,14 @@
 
           <div class="flex items-center mt-2">
             <div class="flex-1">
-              <MjLink href="#" class="text-gray-800">
+              <MjLink href="#" class="text-gray-800 hover:text-blue-900">
                 Esqueci Minha Senha
               </MjLink>
             </div>
-
             <div>
-              <MjButton class="ml-4">
+              <button class="text-white rounded-md px-4 py-2" style="background-color: #334259">
                 Login
-              </MjButton>
+              </button>
             </div>
           </div>
         </form>

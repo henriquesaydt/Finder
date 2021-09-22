@@ -112,14 +112,14 @@ export default {
         radius: 50000,
       });
       circulo = new google.maps.Circle({
-        strokeColor: "#FF0000",
+        strokeColor: "#30a2e6",
         strokeOpacity: 0.8,
         strokeWeight: 2,
-        fillColor: "#FF0000",
+        fillColor: "#56afe3",
         fillOpacity: 0.35,
         map,
         center: { lat: -34.8, lng: 150.644 },
-        radius: 50000,
+        radius: 30000,
       });
     });
   }
