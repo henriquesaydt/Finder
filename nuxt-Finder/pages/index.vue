@@ -16,10 +16,12 @@
             </svg>
           </div>
           <div class="flex flex-col space-y-5 p-4 pl-10 pt-0 overflow-auto h-full barra">
+            <MjStatusDot />
             <div class="text-gray-400">
               <a href="#">
                 <div>
-                  <span class="font-medium">DESABAMENTO</span><br>
+                  <MjStatusDot status="success"/>
+                  <span class="font-medium ml-2">DESABAMENTO</span><br>
                   <span>Centro - Marechal Floriano - ES</span><br>
                   <span>2 Desaparecidos</span>
                 </div>
@@ -28,7 +30,8 @@
             <div class="text-white">
               <a href="#">
                 <div>
-                  <span class="font-medium">DESABAMENTO</span><br>
+                  <MjStatusDot status="warning"/>
+                  <span class="font-medium ml-2">DESABAMENTO</span><br>
                   <span>Centro - Marechal Floriano - ES</span><br>
                   <span>2 Desaparecidos</span>
                 </div>
@@ -37,7 +40,8 @@
             <div v-for="i in 8" :key="i" class="text-gray-400">
               <a href="#">
                 <div>
-                  <span class="font-medium">Enchente {{ i }}</span><br>
+                  <MjStatusDot status="warning"/>
+                  <span class="font-medium ml-2">Enchente {{ i }}</span><br>
                   <span>Centro - Marechal Floriano - ES</span><br>
                   <span>2 Desaparecidos</span>
                 </div>
@@ -50,35 +54,34 @@
       </div>
 
       <!-- Descrição do Evento -->
-      <div class="h-96 flex-none" style="background-color: #2E4059">
+      <div class="flex-none" style="background-color: #2E4059">
 
         <div class="grid grid-cols-3 gap-10 p-20">
-
-          <div class="flex text-white p-5 rounded-lg space-x-5 items-center" style="background-color: #4E6D99">
+          <div class="flex text-white p-5 rounded-lg space-x-5 items-center cardDesaparecido">
             <img class=" h-24 w-24 rounded-full ring-2 ring-white" style="object-fit: cover;" src="https://previews.123rf.com/images/dolgachov/dolgachov1603/dolgachov160306114/54057828-business-people-and-portrait-concept-smiling-businessman-face-or-portrait.jpg" alt="" />
             <div class="flex flex-col justify-between space-y-2">
               <div>
                 <span class="text-xl font-medium">
-                João Paulo, 30 anos
-              </span>
+                  João Paulo, 30 anos
+                </span>
               </div>
               <div>
                 <span>
-                Visto por último: Centro Marechal Floriano asdas das das dasd as dasd asdas 
-              </span>
+                  Visto por último: Centro Marechal Floriano asdas das das dasd as dasd asdas 
+                </span>
               </div>
-              <div>
+              <div class="flex space-x-3 items-center">
+                <MjStatusDot status="warning"/>
                 <span>Situação: Desaparecido à 5 dias</span>
               </div>
             </div>
           </div>
-          <div class=" text-white p-5 rounded-lg" style="background-color: #4E6D99">
+          <div class=" text-white p-5 rounded-lg cardDesaparecido">
             <img class=" h-24 w-24 rounded-full ring-2 ring-white" style="object-fit: cover;" src="https://images-na.ssl-images-amazon.com/images/I/81pUGmwTnRL.png" alt="" />
           </div>
-          <div class=" text-white p-5 rounded-lg" style="background-color: #4E6D99">
+          <div class=" text-white p-5 rounded-lg cardDesaparecido">
             <img class=" h-24 w-24 rounded-full ring-2 ring-white" style="object-fit: cover;" src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" alt="" />
           </div>
-
         </div>
 
       </div>
@@ -87,8 +90,9 @@
 </template>
 
 <script>
-export default {
 
+export default {
+  
 }
 </script>
 
@@ -111,6 +115,11 @@ export default {
   .barra {
     scrollbar-color: #27374d transparent;
     scrollbar-width: auto;
+  }
+
+  .cardDesaparecido {
+    background-color: rgba(78, 109, 153, .8);
+    backdrop-filter: blur(5px);
   }
 
 </style>
