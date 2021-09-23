@@ -62,9 +62,9 @@
 
           <div class="flex flex-col space-y-2">
             <p class="text-gray-800">
-              Senha
+              Usuário
             </p>
-            <input type="text" class=" text-gray-700 border rounded-md leading-tight pl-2 pr-4 py-2 border-gray-300 focus:outline-none focus:border-blue-800">
+            <input type="password" class=" text-gray-700 border rounded-md leading-tight pl-2 pr-4 py-2 border-gray-300 focus:outline-none focus:border-blue-800">
           </div>
 
           <div class="flex items-center mt-2">
@@ -92,6 +92,11 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+
+.loginPassword .relative input {
+  background-color: blue;
+  color: blue;
+}
 
 </style>
