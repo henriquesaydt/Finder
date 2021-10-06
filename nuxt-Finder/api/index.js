@@ -7,6 +7,7 @@ const app = express();
 const jwt = require('jsonwebtoken');
 const jwtSecret = '2T$Kjq8NW4g2T2&43Am2nH4Qt0Hp%l@1dq!y#30TZk0Nl7KSW0';
 const argon2 = require('argon2');
+const md5 = require('md5');
 
 //Importação das rotas
 const routerPessoa = require('./routes/pessoa');
@@ -15,10 +16,28 @@ const routerAtributo = require('./routes/atributo');
 const routerUser = require('./routes/user');
 const routerEvento = require('./routes/evento');
 const routerDesaparecido = require('./routes/desaparecido');
-const routerCaracteristica = require('./routes/caracteristica')
+const routerCaracteristica = require('./routes/caracteristica');
 
 app.use(cors());
 app.use(express.json());
+
+//Multer
+const multer = require('multer');
+const multerStorage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, 'static/public/profile-picture');
+  },
+  filename: function(req, file, cb) {
+    cb(null, md5(Date.now().toString()) + '.png');
+  }
+});
+const upload = multer({ storage: multerStorage });
+
+/*
+  TOKEN:
+    tokenId,
+    userId
+*/
 
 //Verifica o Token e retorna o ID do usuário para a rota
 function verifyJWT(req, res, next) {
@@ -53,7 +72,7 @@ function verifyJWT(req, res, next) {
 }
 
 //Token contém: userId, tokenId
-app.post('/login', async (req, res, next) => {
+app.post('/auth/login', async (req, res, next) => {
   try {
     if (!req.body.username || !req.body.password) {
       return res.status(500).json({
@@ -66,15 +85,22 @@ app.post('/login', async (req, res, next) => {
       }
     });
     if (user) {
+      const pessoa = await prisma.pessoa.findUnique({
+        where: {
+          id: user.pessoaId
+        }
+      });
       const passValid = await argon2.verify(user.password, req.body.password);
       if (passValid) {
         let expiration = 60 * 60 * 8; // Expiração do token, em segundos
+        //Token a ser gravado no banco
         const whiteToken = await prisma.tokenWhiteList.create({
           data: {
             userId: user.id,
             expiraEm: new Date(Date.now() + (1000 * expiration))
           }
         });
+        //Token a ser enviado para o usuário 
         const token = jwt.sign({
           tokenId: whiteToken.id,
           userId: whiteToken.userId
@@ -82,7 +108,9 @@ app.post('/login', async (req, res, next) => {
           expiresIn: expiration
         });
         if (token) {
-          return res.json({ auth: true, token: token });
+          return res.json({ 
+            token: token 
+          });
         }
       }
     }
@@ -96,18 +124,57 @@ app.post('/login', async (req, res, next) => {
   }
 });
 
-app.get('/logout', verifyJWT, async (req, res, next) => {
-  console.log(req.token);
-  const whiteToken = await prisma.tokenWhiteList.delete({
-    where: {
-      id: req.token.tokenId
+app.get('/auth/user', verifyJWT, async (req, res, next) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.token.userId
+      }
+    });
+    if (user) {
+      const pessoa = await prisma.pessoa.findUnique({
+        where: {
+          id: user.pessoaId
+        }
+      });
+      if (pessoa) {
+        return res.status(200).json({
+          user: {
+            ativo: user.ativo,
+            flags: user.flags,
+            avatar: user.avatar,
+            nome: pessoa.nome,
+            nascimento: pessoa.nascimento,
+          }, 
+        })
+      }
     }
-  });
-  if (whiteToken) {
-    return res.status(200).json({message: "Logout com sucesso"});
   }
+  catch (err) {
+    console.log(err);
+  }
+  return res.status(500).json({message: "Não foi possível obter esse recurso"});
+})
+
+app.get('/auth/logout', verifyJWT, async (req, res, next) => {
+  try {
+    const whiteToken = await prisma.tokenWhiteList.delete({
+      where: {
+        id: req.token.tokenId
+      }
+    });
+    if (whiteToken) {
+      return res.status(200).json({message: "Logout com sucesso"});
+    }
+  }
+  catch (err) {}
   return res.status(500).json({message: "Não foi possível concluir o logout"});
 });
+
+app.post('/public/profile-picture', upload.single('upload'), (req, res) => {
+  console.log(req.file.filename);
+  res.send();
+})
 
 app.use('/pessoa', verifyJWT, routerPessoa);
 app.use('/animal', verifyJWT, routerAnimal);

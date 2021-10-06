@@ -28,13 +28,13 @@
         </div>
       </div>
 
-      <MjPopover class=" hidden" align="right">
+      <MjPopover v-if="$auth.loggedIn" align="right">
         <div class="hidden md:flex items-center space-x-20">
           <button href="#" class="flex space-x-4 items-center">
             <span class="text-white text-2xl font-medium">
-              Fulano de Tal
+              {{ $auth.user.nome }}
             </span>
-            <img class=" h-12 w-auto rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+            <img class=" h-12 w-auto rounded-full ring-2 ring-white" :src="'/public/profile-picture/' + $auth.user.avatar" alt="" />
           </button>
         </div>
         <template #content>
@@ -42,61 +42,88 @@
             <MjPopoverItem class="hover:bg-gray-200">Meu perfil</MjPopoverItem>
             <MjDivider class="my-2" />
             <MjPopoverItem class="hover:bg-gray-200">Alterar Senha</MjPopoverItem>
-            <MjPopoverItem class="hover:bg-gray-200">Sair</MjPopoverItem>
+            <MjPopoverItem @click="userLogout" class="hover:bg-gray-200">Sair</MjPopoverItem>
           </MjPopoverContainer>
         </template>
       </MjPopover>
 
-      <button class=" rounded-lg bg-white text-grey-800 font-medium px-5 text-lg" @click="$refs.modalLogin.open()">
+      <button v-else class=" rounded-lg bg-white text-grey-800 font-medium px-5 text-lg" @click="$refs.modalLogin.$refs.modal.open()">
         Login
       </button>
 
-      <MjModal ref="modalLogin" class="">
-        <form class="flex flex-col space-y-3 py-3 lg:w-3/4 lg:mx-auto grid gap-4 font-medium">
-          <div class="flex flex-col space-y-2">
-            <p class="text-gray-800">
-              Usuário
-            </p>
-            <input type="text" class=" text-gray-700 border rounded-md leading-tight pl-2 pr-4 py-2 border-gray-300 focus:outline-none focus:border-blue-800">
-          </div>
+      <ModalLogin ref="modalLogin" @register="$refs.modalLogin.$refs.modal.close(); $refs.modalRegister.$refs.modal.open()"/>
 
-          <div class="flex flex-col space-y-2">
-            <p class="text-gray-800">
-              Usuário
-            </p>
-            <input type="password" class=" text-gray-700 border rounded-md leading-tight pl-2 pr-4 py-2 border-gray-300 focus:outline-none focus:border-blue-800">
-          </div>
-
-          <div class="flex items-center mt-2">
-            <div class="flex-1">
-              <MjLink href="#" class="text-gray-800 hover:text-blue-900">
-                Esqueci Minha Senha
-              </MjLink>
-            </div>
-            <div>
-              <button class="text-white rounded-md px-4 py-2" style="background-color: #334259">
-                Login
-              </button>
-            </div>
-          </div>
-        </form>
-      </MjModal>
+      <ModalRegister ref="modalRegister"/>
       
     </div>
   </nav>
 </template>
 
 <script>
-export default {
+import { Cropper } from 'vue-advanced-cropper';
+import 'vue-advanced-cropper/dist/style.css';
 
+export default {
+  data() {
+    return {
+      register: {
+        avatar: {
+          src: null,
+          type: null
+        }
+      },
+      modalRegisterContinuar: false
+    }
+  },
+
+  methods: {
+    async userLogout() {
+      try {
+        let response = await this.$auth.logout();
+        console.log(response);
+      }
+      catch (err) {
+        console.log(err);
+      }
+    },
+    crop(){
+      const { canvas } = this.$refs.cropper.getResult();
+      canvas.toBlob(blob => {
+        const form = new FormData();
+        form.append('upload', blob)
+        this.$axios.post('http://localhost:3000/api/public/profile-picture', form);
+      });
+    },
+    reset() {
+			this.register.avatar = {
+				src: null,
+				type: null
+			}
+		},
+    loadImage(event) {
+			const { files } = event.target;
+			if (files && files[0]) {
+				if (this.register.avatar.src) {
+					URL.revokeObjectURL(this.register.avatar.src)
+				}
+				const blob = URL.createObjectURL(files[0]);
+				const reader = new FileReader();
+				reader.onload = (e) => {
+					this.register.avatar = {
+						src: blob,
+					};
+				};
+				reader.readAsArrayBuffer(files[0]);
+			}
+		},
+  },
+
+  components: {
+    Cropper
+  }
 }
 </script>
 
 <style scoped>
-
-.loginPassword .relative input {
-  background-color: blue;
-  color: blue;
-}
 
 </style>

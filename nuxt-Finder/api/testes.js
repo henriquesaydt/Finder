@@ -1,5 +1,5 @@
-var teste = {};
+const md5 = require('md5');
 
-teste.campo = "um";
+var hash = md5(Date.now())
 
-console.log(teste);
+console.log(hash);

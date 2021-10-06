@@ -3,7 +3,7 @@
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = "mysql://root:0147@localhost:3306/Finder"
 }
 
 generator client {
@@ -148,6 +148,7 @@ model User {
   username String @unique
   password String
   flags Int @default(0)
+  avatar String?
   tokenWhiteList TokenWhiteList[]
   grupoUsuario GrupoUsuario[]
 

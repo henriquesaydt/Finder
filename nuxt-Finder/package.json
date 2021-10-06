@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.12.2",
+    "@nuxtjs/auth-next": "5.0.0-1624817847.21691f1",
     "@nuxtjs/axios": "^5.13.6",
     "@prisma/client": "^2.30.0",
     "argon2": "^0.28.2",
@@ -17,8 +18,11 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
+    "md5": "^2.3.0",
     "mijin": "^1.6.0",
-    "nuxt": "^2.15.7"
+    "multer": "^1.4.3",
+    "nuxt": "^2.15.7",
+    "vue-advanced-cropper": "^1.8.2"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^4.2.1",
