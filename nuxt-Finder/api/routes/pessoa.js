@@ -105,20 +105,15 @@ router.get('/:pessoaId', authorization, async (req, res) => {
 
 router.post('/', authorization, async (req, res) => {
   var newPessoa = {
-    nome: null,
-    nascimento: null
+    nome: req.body.nome,
+    nascimento: req.body.nascimento,
+    criado_por: req.token.userId,
+    criado_ip: req.ip
   }
   if (req.body.nome) {
-    newPessoa.nome = req.body.nome;
-    if (req.body.nascimento) newPessoa.nascimento = req.body.nascimento;
     try {
       const pessoa = await prisma.pessoa.create({
-        data: {
-          nome: newPessoa.nome,
-          nascimento: new Date(newPessoa.nascimento),
-          criado_por: req.token.userId,
-          criado_ip: req.ip
-        }
+        data: newPessoa
       });
       if (pessoa) {
         return res.status(201).json({
@@ -174,15 +169,11 @@ router.patch('/', authorization, async (req, res) => {
   if (req.body.id) {
     var userId = parseInt(req.body.id);
     var newPessoa = {
+      nome: req.body.nome,
+      nascimento: new Date(req.body.nascimento),
       alterado_por: req.token.userId,
       alterado_ip: req.ip,
       alterado_em: new Date(Date.now())
-    }
-    if (req.body.nome) {
-      newPessoa.nome = req.body.nome
-    }
-    if (req.body.nascimento) {
-      newPessoa.nascimento = new Date(req.body.nascimento);
     }
     try {
       const pessoa = await prisma.pessoa.update({

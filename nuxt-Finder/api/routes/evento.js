@@ -132,7 +132,9 @@ router.post('/', authorization, async (req, res) => {
     localidade_r: req.body.localidade_r,
     endereco: req.body.endereco,
     bairro: req.body.bairro,
-    cidade: req.body.cidade
+    cidade: req.body.cidade,
+    criado_por: req.token.userId,
+    criado_ip: req.ip
   }
 
   if (req.body.nome && ((newEvento.localidade_x && newEvento.localidade_y) || (newEvento.endereco && newEvento.bairro && newEvento.cidade))) {

@@ -131,23 +131,16 @@ router.get('/:animalId', authorization, async (req, res) => {
 
 router.post('/', authorization, async (req, res) => {
   var newAnimal = {
-    nome: null,
-    tipo: null,
-    raca: null
+    nome: req.body.nome,
+    tipo: req.body.tipo,
+    raca: req.body.raca,
+    criado_por: req.token.userId,
+    criado_ip: req.ip
   }
-  if (req.body.nome && req.body.tipo) {
-    newAnimal.nome = req.body.nome;
-    newAnimal.tipo = req.body.tipo;
-    if (req.body.raca) newAnimal.raca = req.body.raca;
+  if (newAnimal.nome && newAnimal.tipo) {
     try {
       const rows = await prisma.animal.create({
-        data: {
-          nome: newAnimal.nome,
-          tipo: newAnimal.tipo,
-          raca: newAnimal.raca,
-          criado_por: req.token.userId,
-          criado_ip: req.ip
-        }
+        data: newAnimal
       });
       if (rows) {
         return res.status(201).json({
@@ -203,13 +196,13 @@ router.patch('/', authorization, async (req, res) => {
   if (req.body.id) {
     var animalId = parseInt(req.body.id);
     var newAnimal = {
+      nome: req.body.nome,
+      tipo: req.body.tipo,
+      raca: req.body.raca,
       alterado_por: req.token.userId,
       alterado_ip: req.ip,
       alterado_em: new Date(Date.now())
     }
-    if (req.body.nome) newAnimal.nome = req.body.nome;
-    if (req.body.tipo) newAnimal.tipo = req.body.tipo;
-    if (req.body.raca) newAnimal.raca = req.body.raca;
     try {
       const rows = await prisma.animal.update({
         where: {

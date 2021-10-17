@@ -6,7 +6,7 @@
       <div class="flex">
         <!-- EVENTOS -->
         <!-- COR: #4c5d78 -->
-        <div class=" w-3/12 flex flex-col" style="background-color: #4c5d78; height: 40rem">
+        <div class=" w-3/12 flex flex-col" style="background-color: #4c5d78; height: 39rem">
           <div class="flex items-center text-white pl-4 space-x-4 pt-4 pb-4">
             <span class="font-medium text-xl">
               Eventos

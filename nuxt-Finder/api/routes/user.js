@@ -149,24 +149,16 @@ router.get('/:userId', authorization, async (req, res) => {
 
 router.post('/', authorization, async (req, res) => {
   var newUser = {
-    pessoaId: null,
-    username: null,
-    password: null
-    
+    pessoaId: req.body.pessoaId,
+    username: req.body.username,
+    password: await argon2.hash(req.body.password),
+    criado_por: req.token.userId,
+    criado_ip: req.ip
   }
-  if (req.body.pessoaId && req.body.username && req.body.password) {
-    newUser.pessoaId = req.body.pessoaId;
-    newUser.username = req.body.username;
-    newUser.password = await argon2.hash(req.body.password);
+  if (newUser.pessoaId && newUser.username && newUser.password) {
     try {
       const rows = await prisma.user.create({
-        data: {
-          pessoaId: newUser.pessoaId,
-          username: newUser.username,
-          password: newUser.password,
-          criado_por: req.token.userId,
-          criado_ip: req.ip
-        }
+        data: newUser
       });
       if (rows) {
         return res.status(201).json({
@@ -243,16 +235,13 @@ router.patch('/', authorization, async (req, res) => {
   if (req.body.id) {
     var userId = parseInt(req.body.id);
     var newUser = {
-      pessoaId: undefined,
-      username: undefined,
-      password: undefined,
+      pessoaId: req.body.pessoaId,
+      username: req.body.username,
+      password: await argon2.hash(req.body.password),
       alterado_por: req.token.userId,
       alterado_ip: req.ip,
       alterado_em: new Date(Date.now())
     }
-    if (req.body.pessoaId) newUser.pessoaId = req.body.pessoaId;
-    if (req.body.username) newUser.username = req.body.username;
-    if (req.body.password) newUser.password = await argon2.hash(req.body.password);
     try {
       const rows = await prisma.user.update({
         where: {

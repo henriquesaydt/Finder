@@ -178,7 +178,8 @@ router.patch('/', authorization, async (req, res) => {
       desaparecido_id: req.token.desaparecido_id,
       valor: req.token.valor,
       alterado_por: req.token.userId,
-      alterado_ip: req.ip
+      alterado_ip: req.ip,
+      alterado_em: new Date(Date.now())
     }
 
     if (newCaracteristica.atributo_id && newCaracteristica.desaparecido_id && newCaracteristica.valor ) {

@@ -198,7 +198,8 @@ router.patch('/', authorization, async (req, res) => {
       eventoId: req.body.eventoId,
       encontrado: req.body.encontrado,
       alterado_por: req.token.userId,
-      alterado_ip: req.ip
+      alterado_ip: req.ip,
+      alterado_em: new Date(Date.now())
     }
 
     if (newDesaparecido.eventoId && ((newDesaparecido.pessoa_id && !newDesaparecido.animal_id) || (!newDesaparecido.pessoa_id && newDesaparecido.animal_id))) {

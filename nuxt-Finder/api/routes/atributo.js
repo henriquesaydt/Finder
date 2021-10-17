@@ -105,20 +105,15 @@ router.get('/:atributoId', authorization, async (req, res) => {
 
 router.post('/', authorization, async (req, res) => {
   var newAtributo = {
-    nome: null,
-    is_animal: null
+    nome: req.body.nome,
+    is_animal: (req.body.is_animal == null || req.body.is_animal == false) ? false : true,
+    criado_por: req.token.userId,
+    criado_ip: req.ip
   }
-  if (req.body.nome && req.body.hasOwnProperty("is_animal")) {
-    newAtributo.nome = req.body.nome;
-    newAtributo.is_animal = req.body.is_animal;
+  if (newAtributo.nome) {
     try {
       const rows = await prisma.atributo.create({
-        data: {
-          nome: newAtributo.nome,
-          is_animal: newAtributo.is_animal,
-          criado_por: req.token.userId,
-          criado_ip: req.ip
-        }
+        data: newAtributo
       });
       if (rows) {
         return res.status(201).json({
@@ -176,12 +171,12 @@ router.patch('/', authorization, async (req, res) => {
   if (req.body.id) {
     var atributoId = parseInt(req.body.id);
     var newAtributo = {
+      nome: req.body.nome,
+      is_animal: (req.body.is_animal == null || req.body.is_animal == false) ? false : true,
       alterado_por: req.token.userId,
       alterado_ip: req.ip,
       alterado_em: new Date(Date.now())
     }
-    if (req.body.nome) newAtributo.nome = req.body.nome;
-    if (req.body.is_animal) newAtributo.is_animal = req.body.is_animal;
     try {
       const rows = await prisma.atributo.update({
         where: {
