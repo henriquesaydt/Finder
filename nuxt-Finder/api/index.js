@@ -7,7 +7,6 @@ const app = express();
 const jwt = require('jsonwebtoken');
 const jwtSecret = '2T$Kjq8NW4g2T2&43Am2nH4Qt0Hp%l@1dq!y#30TZk0Nl7KSW0';
 const argon2 = require('argon2');
-const md5 = require('md5');
 
 //Importação das rotas
 const routerPessoa = require('./routes/pessoa');
@@ -17,21 +16,10 @@ const routerUser = require('./routes/user');
 const routerEvento = require('./routes/evento');
 const routerDesaparecido = require('./routes/desaparecido');
 const routerCaracteristica = require('./routes/caracteristica');
+const routerRegister = require('./routes/registrar')
 
 app.use(cors());
 app.use(express.json());
-
-//Multer
-const multer = require('multer');
-const multerStorage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, 'static/public/profile-picture');
-  },
-  filename: function(req, file, cb) {
-    cb(null, md5(Date.now().toString()) + '.png');
-  }
-});
-const upload = multer({ storage: multerStorage });
 
 /*
   TOKEN:
@@ -171,18 +159,14 @@ app.get('/auth/logout', verifyJWT, async (req, res, next) => {
   return res.status(500).json({message: "Não foi possível concluir o logout"});
 });
 
-app.post('/public/profile-picture', upload.single('upload'), (req, res) => {
-  console.log(req.file.filename);
-  res.send();
-})
-
 app.use('/pessoa', verifyJWT, routerPessoa);
 app.use('/animal', verifyJWT, routerAnimal);
 app.use('/atributo', verifyJWT, routerAtributo);
 app.use('/user', verifyJWT, routerUser);
 app.use('/evento', verifyJWT, routerEvento);
 app.use('/desaparecido', verifyJWT, routerDesaparecido);
-app.use('/caracteristica', verifyJWT, routerCaracteristica)
+app.use('/caracteristica', verifyJWT, routerCaracteristica);
+app.use('/register', routerRegister);
 
 export default {
   path: '/api',

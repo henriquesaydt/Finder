@@ -106,8 +106,12 @@ export default {
       const { canvas } = this.$refs.cropper.getResult();
       canvas.toBlob(blob => {
         const form = new FormData();
-        form.append('upload', blob)
-        this.$axios.post('http://localhost:3000/api/public/profile-picture', form);
+        form.append('upload', blob);
+        form.append('nome', "Pessoa 1");
+        form.append('nascimento', new Date("1999-10-02"));
+        form.append('username', "username1");
+        form.append('password', "123");
+        this.$axios.post('http://localhost:3000/api/register', form);
       });
     },
     reset() {
