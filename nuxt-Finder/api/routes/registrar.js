@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 import { PrismaClient } from '@prisma/client';
+import { findSync } from '@prisma/client/runtime';
 const prisma = new PrismaClient();
 const argon2 = require('argon2');
 const md5 = require('md5');
+const fs = require('fs')
 
 //Multer
 const multer = require('multer');
@@ -15,9 +17,9 @@ const multerStorage = multer.diskStorage({
     cb(null, md5(Date.now().toString()) + '.png'); //Nome da foto: md5 da data atual e extensão png
   }
 });
-const upload = multer({ storage: multerStorage }).single('upload');
+const upload = multer({ storage: multerStorage });
 
-router.post('/', async (req, res) => {
+router.post('/', upload.single('upload'), async (req, res) => {
   console.log(req.body);
   if (req.body.nome && req.body.nascimento && req.body.username && req.body.password) {
     try {
@@ -30,49 +32,33 @@ router.post('/', async (req, res) => {
         data: newPessoa
       });
       if (createdPessoa) {
-        const uploadStatus = upload(req, res, function (err) {
-          if (err) {
-            console.log(err);
-            return {
-              status: "error",
-              error: err
-            };
-          }
-          return {
-            status: "success",
-            file: req.file
-          }
-        });
-        if (uploadStatus.status == "success") {
-          var newUser = {
-            pessoaId: pessoa.id,
-            username: req.body.username,
-            password: await argon2.hash(req.body.password),
-            avatar: uploadStatus.file.filename
-          }
-          var user = await prisma.user.create({
-            data: newUser
-          });
-          if (user) {
-            return res.status(200).json({
-              stauts: "success",
-              message: "Usuário cadastrado com sucesso"
-            })
-          }
+        var newUser = {
+          pessoaId: createdPessoa.id,
+          username: req.body.username,
+          password: await argon2.hash(req.body.password),
+          avatar: req.file.filename
         }
-        else {
-          console.log(uploadStatus.error);
+        var user = await prisma.user.create({
+          data: newUser
+        });
+        if (user) {
+          return res.status(200).json({
+            stauts: "success",
+            message: "Usuário cadastrado com sucesso"
+          })
         }
       }
     }
     catch (err) {
       console.log(err);
     }
+    fs.unlinkSync('static/public/profile-picture/' + req.file.filename);
     return res.status(500).json({
       status: "error",
       message: "Não foi possível cadastrar esse usuário"
     });
   }
+  fs.unlinkSync('static/public/profile-picture/' + req.file.filename);
   return res.status(400).json({
     status: "error",
     message: "Parâmetros inválidos"

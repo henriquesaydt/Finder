@@ -103,12 +103,13 @@ export default {
 
   methods: {
     crop(){
+      const data = new Date('1999-10-02')
       const { canvas } = this.$refs.cropper.getResult();
       canvas.toBlob(blob => {
         const form = new FormData();
         form.append('upload', blob);
         form.append('nome', "Pessoa 1");
-        form.append('nascimento', new Date("1999-10-02"));
+        form.append('nascimento', data.toISOString());
         form.append('username', "username1");
         form.append('password', "123");
         this.$axios.post('http://localhost:3000/api/register', form);

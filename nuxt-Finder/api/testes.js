@@ -1,5 +1,3 @@
-const md5 = require('md5');
-
-var hash = md5(Date.now())
-
-console.log(hash);
+var data = new Date("1999-10-02");
+data = data.toISOString();
+console.log(data);
