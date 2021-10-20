@@ -1,41 +1,17 @@
 <template>
-  <MjModal @close="modalRegisterContinuar=false" ref="modal">
+  <MjModal @close="resetData" ref="modal">
     <div v-if="!modalRegisterContinuar">
       <form class="flex flex-col space-y-3 py-3 lg:w-3/5 lg:mx-auto font-medium">
-        <div class="flex flex-col space-y-2">
-          <p class="text-gray-800">
-            Nome Completo
-          </p>
-          <input type="text" class=" text-gray-700 border rounded-md leading-tight pl-2 pr-4 py-2 border-gray-300 focus:outline-none focus:border-blue-800">
-        </div>
-        <div class="flex flex-col space-y-2">
-          <p class="text-gray-800">
-            Data de Nascimento
-          </p>
-          <input type="date" class=" text-gray-700 border rounded-md leading-tight pl-2 pr-4 py-2 border-gray-300 focus:outline-none focus:border-blue-800">
-        </div>
-        <div class="flex flex-col space-y-2">
-          <p class="text-gray-800">
-            Nome de Usuário
-          </p>
-          <input type="text" class=" text-gray-700 border rounded-md leading-tight pl-2 pr-4 py-2 border-gray-300 focus:outline-none focus:border-blue-800">
-        </div>
-        <div class="flex flex-col space-y-2">
-          <p class="text-gray-800">
-            Senha
-          </p>
-          <input type="text" class=" text-gray-700 border rounded-md leading-tight pl-2 pr-4 py-2 border-gray-300 focus:outline-none focus:border-blue-800">
-        </div>
-        <div class="flex flex-col space-y-2">
-          <p class="text-gray-800">
-            Repita a Senha
-          </p>
-          <input type="text" class=" text-gray-700 border rounded-md leading-tight pl-2 pr-4 py-2 border-gray-300 focus:outline-none focus:border-blue-800">
-        </div>
+
+        <InputForm v-bind:value.sync="registerForm.nome" name="Nome Completo" type="text"/>
+        <InputForm v-bind:value.sync="registerForm.nascimento" name="Data de Nascimento" type="date"/>
+        <InputForm v-bind:value.sync="registerForm.username" name="Nome de Usuário" type="text"/>
+        <InputForm v-bind:value.sync="registerForm.password" name="Senha" type="password"/>
+        <InputForm v-bind:value.sync="registerForm.passwordRepeat" name="Repita a Senha" type="password"/>
 
         <div class="flex justify-around items-center mt-2">
           <div>
-            <button type="button" class="text-white rounded-md px-4 py-2 bg-gray-500" @click="$refs.modalRegister.close()">
+            <button type="button" class="text-white rounded-md px-4 py-2 bg-gray-500" @click="$refs.modal.close()">
               Cancelar
             </button>
           </div>
@@ -87,11 +63,17 @@
 <script>
 import { Cropper } from 'vue-advanced-cropper';
 import 'vue-advanced-cropper/dist/style.css';
+import InputForm from './InputForm.vue';
 
 export default {
   data() {
     return {
       registerForm: {
+        nome: null,
+        nascimento: null,
+        username: null,
+        password: null,
+        passwordRepeat: null,
         avatar: {
           src: null,
           type: null
@@ -102,6 +84,20 @@ export default {
   },
 
   methods: {
+    resetData() {
+      this.registerForm = {
+        nome: null,
+        nascimento: null,
+        username: null,
+        password: null,
+        passwordRepeat: null,
+        avatar: {
+          src: null,
+          type: null
+        }
+      };
+      this.modalRegisterContinuar = false;
+    },
     crop(){
       const data = new Date('1999-10-02')
       const { canvas } = this.$refs.cropper.getResult();
@@ -144,11 +140,8 @@ export default {
   },
 
   components: {
-    Cropper
+    Cropper,
+    InputForm,
   }
 }
 </script>
-
-<style>
-
-</style>
