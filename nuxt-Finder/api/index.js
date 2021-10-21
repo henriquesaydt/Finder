@@ -159,6 +159,12 @@ app.get('/auth/logout', verifyJWT, async (req, res, next) => {
   return res.status(500).json({message: "Não foi possível concluir o logout"});
 });
 
+app.post('/registerr', (req, res) => {
+  res.status(200).json({
+    status: "ok"
+  })
+})
+
 app.use('/pessoa', verifyJWT, routerPessoa);
 app.use('/animal', verifyJWT, routerAnimal);
 app.use('/atributo', verifyJWT, routerAtributo);

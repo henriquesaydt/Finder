@@ -23,7 +23,7 @@
             Sobre
           </a>
           <a href="#" class="text-white border-b-2 border-transparent hover:border-white">
-            Fale Conosco
+            Contato
           </a>
         </div>
       </div>

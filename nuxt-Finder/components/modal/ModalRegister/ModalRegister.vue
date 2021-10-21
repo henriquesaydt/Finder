@@ -1,5 +1,6 @@
 <template>
   <MjModal @close="resetData" ref="modal">
+    <!-- Formulario de cadastro de usuario -->
     <div v-if="!modalRegisterContinuar">
       <form class="flex flex-col space-y-3 py-3 lg:w-3/5 lg:mx-auto font-medium">
 
@@ -24,13 +25,15 @@
 
       </form>
     </div>
+    <!-- Seleção de foto de perfil -->
     <div v-else>
       <div class="flex flex-col" style="color: #334259">
         <div class="flex justify-between items-center">
           <p class="font-medium text-2xl">
             Escolha sua foto de perfil
           </p>
-          <button type="button" @click="crop">
+          <!-- Botão de avançar -->
+          <button type="button" @click="captureAvatar">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="#334259">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -47,7 +50,7 @@
           <img v-else src="/public/profile-picture/none.png" alt="">
         </div>
         <div class="flex justify-center space-x-5">
-          <button class="rounded-md text-white py-2 px-4 bg-gray-600" @click="reset">
+          <button class="rounded-md text-white py-2 px-4 bg-gray-600" @click="resetAvatar">
             Remover Foto
           </button>
           <button class="rounded-md text-white py-2 px-4" @click="$refs.sendPicture.click()" style="background-color: #334259">
@@ -57,6 +60,24 @@
         </div>
       </div>
     </div>
+    <ModalAviso ref="modalErrorRegister" 
+      title="Erro ao cadastrar usuário" 
+      text="Não foi possível concluir o seu cadastro, por favor, tente novamente mais tarde."
+      bg-color-class="bg-red-100"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="red">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+    </ModalAviso>
+    <ModalAviso ref="modalSuccessRegister" 
+      title="Cadastro Realizado!" 
+      text="Sua conta foi criada com sucesso, você já pode utilizar seu nome de usuário e senha na tela de login."
+      bg-color-class="bg-green-100"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="green">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+    </ModalAviso>
   </MjModal>
 </template>
 
@@ -68,17 +89,7 @@ import InputForm from './InputForm.vue';
 export default {
   data() {
     return {
-      registerForm: {
-        nome: null,
-        nascimento: null,
-        username: null,
-        password: null,
-        passwordRepeat: null,
-        avatar: {
-          src: null,
-          type: null
-        }
-      },
+      registerForm: null,
       modalRegisterContinuar: false
     }
   },
@@ -98,26 +109,48 @@ export default {
       };
       this.modalRegisterContinuar = false;
     },
-    crop(){
-      const data = new Date('1999-10-02')
-      const { canvas } = this.$refs.cropper.getResult();
-      canvas.toBlob(blob => {
-        const form = new FormData();
-        form.append('upload', blob);
-        form.append('nome', "Pessoa 1");
-        form.append('nascimento', data.toISOString());
-        form.append('username', "username1");
-        form.append('password', "123");
-        this.$axios.post('http://localhost:3000/api/register', form);
+    async captureAvatar(){
+      const form = new FormData();
+      function getBlob(canvas) {
+        return new Promise(function(resolve, reject) {
+          try {
+            canvas.toBlob(blob => {
+              resolve(blob)
+            })
+          }
+          catch(err) {
+            reject(err);
+          }
+        })
+      }
+      try {
+        const { canvas } = this.$refs.cropper.getResult();
+        var blob = await getBlob(canvas);
+        form.append('upload', blob)
+      }
+      catch(err) {
+        form.append('upload', null);
+      }
+      form.append('nome', this.registerForm.nome);
+      form.append('nascimento', this.registerForm.nascimento);
+      form.append('username', this.registerForm.username);
+      form.append('password', this.registerForm.password);
+      this.$axios.post('http://localhost:3000/api/registerr', form)
+      .then(() => {
+        this.$refs.modalSuccessRegister.open();
+      })
+      .catch(() => {
+        this.$refs.modalErrorRegister.open();
       });
     },
-    reset() {
-			this.registerForm.avatar = {
-				src: null,
-				type: null
-			}
-		},
+    resetAvatar() {
+      this.registerForm.avatar = {
+        src: null,
+        type: null
+      }
+    },
     loadImage(event) {
+      this.resetAvatar();
 			const { files } = event.target;
 			if (files && files[0]) {
 				if (this.registerForm.avatar.src) {
@@ -132,11 +165,12 @@ export default {
 				};
 				reader.readAsArrayBuffer(files[0]);
 			}
+      this.$refs.sendPicture.value=null;
 		},
   },
 
-  destroyed() {
-    this.modalRegisterContinuar = false;
+  created() {
+    this.resetData();
   },
 
   components: {
