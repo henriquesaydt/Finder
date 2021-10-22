@@ -20,7 +20,6 @@ const multerStorage = multer.diskStorage({
 const upload = multer({ storage: multerStorage });
 
 router.post('/', upload.single('upload'), async (req, res) => {
-  console.log(req.body);
   if (req.body.nome && req.body.nascimento && req.body.username && req.body.password) {
     try {
       var createdPessoa = null;
