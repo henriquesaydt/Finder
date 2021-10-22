@@ -17,7 +17,7 @@
     </div>
     <div class="flex flex-row-reverse mt-7">
       <div>
-        <button @click="$refs.modal.close()" class="rounded-md text-white py-2 px-4" style="background-color: #334259">
+        <button @click="$emit('close'); $refs.modal.close()" class="rounded-md text-white py-2 px-4" style="background-color: #334259">
           Continuar
         </button>
       </div>

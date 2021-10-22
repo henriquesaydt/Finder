@@ -8,7 +8,7 @@
         <InputForm v-bind:value.sync="registerForm.nascimento" name="Data de Nascimento" type="date"/>
         <InputForm v-bind:value.sync="registerForm.username" name="Nome de Usuário" type="text"/>
         <InputForm v-bind:value.sync="registerForm.password" name="Senha" type="password"/>
-        <InputForm v-bind:value.sync="registerForm.passwordRepeat" name="Repita a Senha" type="password"/>
+        <InputForm :borderColor="senhaValida?'green':'red'" v-bind:value.sync="registerForm.passwordRepeat" name="Repita a Senha" type="password"/>
 
         <div class="flex justify-around items-center mt-2">
           <div>
@@ -17,7 +17,7 @@
             </button>
           </div>
           <div>
-            <button @click="modalRegisterContinuar = true" type="button" class="text-white rounded-md px-4 py-2" style="background-color: #334259">
+            <button @click="validateForm" type="button" class="text-white rounded-md px-4 py-2" style="background-color: #334259">
               Continuar
             </button>
           </div>
@@ -26,7 +26,7 @@
       </form>
     </div>
     <!-- Seleção de foto de perfil -->
-    <div v-else>
+    <div v-else-if="modalRegisterContinuar">
       <div class="flex flex-col" style="color: #334259">
         <div class="flex justify-between items-center">
           <p class="font-medium text-2xl">
@@ -55,12 +55,13 @@
           </button>
           <button class="rounded-md text-white py-2 px-4" @click="$refs.sendPicture.click()" style="background-color: #334259">
             <input class="hidden" type="file" ref="sendPicture" @change="loadImage($event)" accept="image/*">
-            Enviar Foto
+            Selecionar Foto
           </button>
         </div>
       </div>
     </div>
-    <ModalAviso ref="modalErrorRegister" 
+    <!-- Aviso de erro ao registrar usuário -->
+    <ModalAviso @close="$refs.modal.close()" ref="modalErrorRegister" 
       title="Erro ao cadastrar usuário" 
       text="Não foi possível concluir o seu cadastro, por favor, tente novamente mais tarde."
       bg-color-class="bg-red-100"
@@ -69,13 +70,24 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
       </svg>
     </ModalAviso>
-    <ModalAviso ref="modalSuccessRegister" 
+    <!-- Aviso de sucesso ao registrar usuário -->
+    <ModalAviso @close="$refs.modal.close()" ref="modalSuccessRegister" 
       title="Cadastro Realizado!" 
       text="Sua conta foi criada com sucesso, você já pode utilizar seu nome de usuário e senha na tela de login."
       bg-color-class="bg-green-100"
     >
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="green">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+    </ModalAviso>
+    <!-- Aviso de erro ao preencher o formulário -->
+    <ModalAviso ref="modalErrorForm" 
+      title="Dados inválidos!" 
+      text="Um ou mais campos não puderam ser validados, por favor, preencha as informações corretamente"
+      bg-color-class="bg-red-100"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="red">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
       </svg>
     </ModalAviso>
   </MjModal>
@@ -90,7 +102,19 @@ export default {
   data() {
     return {
       registerForm: null,
-      modalRegisterContinuar: false
+      modalRegisterContinuar: false,
+      registroFinalizado: false,
+    }
+  },
+
+  computed: {
+    senhaValida() {
+      if (this.registerForm.password != "" && this.registerForm.password != null && this.registerForm.password == this.registerForm.passwordRepeat) {
+        return true;
+      }
+      else {
+        return false;
+      }
     }
   },
 
@@ -108,6 +132,20 @@ export default {
         }
       };
       this.modalRegisterContinuar = false;
+      this.registroFinalizado = false;
+    },
+    validateForm() {
+      if (
+        this.registerForm.nome != null && this.registerForm.nome != '' &&
+        this.registerForm.nascimento != null && this.registerForm.nome != '' &&
+        this.registerForm.username != null && this.registerForm.username != '' &&
+        this.senhaValida
+      ) {
+        this.modalRegisterContinuar = true;
+      }
+      else {
+        this.$refs.modalErrorForm.open();
+      }
     },
     async captureAvatar(){
       const form = new FormData();
@@ -132,14 +170,16 @@ export default {
         form.append('upload', null);
       }
       form.append('nome', this.registerForm.nome);
-      form.append('nascimento', this.registerForm.nascimento);
+      form.append('nascimento', new Date(this.registerForm.nascimento).toISOString());
       form.append('username', this.registerForm.username);
       form.append('password', this.registerForm.password);
-      this.$axios.post('http://localhost:3000/api/registerr', form)
+      this.$axios.post('http://localhost:3000/api/register', form)
       .then(() => {
+        this.registroFinalizado = true;
         this.$refs.modalSuccessRegister.open();
       })
       .catch(() => {
+        this.registroFinalizado = true;
         this.$refs.modalErrorRegister.open();
       });
     },

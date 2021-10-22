@@ -36,7 +36,7 @@ router.post('/', upload.single('upload'), async (req, res) => {
           pessoaId: createdPessoa.id,
           username: req.body.username,
           password: await argon2.hash(req.body.password),
-          avatar: req.file.filename
+          avatar: req.file ? req.file.filename : 'none.png'
         }
         var user = await prisma.user.create({
           data: newUser
