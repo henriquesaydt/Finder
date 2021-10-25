@@ -55,12 +55,15 @@
 
       <!-- Descrição do Evento -->
       <div class="flex-none" style="background-color: #2E4059">
-        <div>
-          <p>
-            
-          </p>
+        <div class="flex mt-10 mx-20 p-5 rounded-lg text-white font-medium text-2xl" style="background-color: #46638c">
+          <div>
+            <span>
+              Evento Tal - Centro, Marechal Floriano, Espirito Santo
+            </span>
+          </div>
         </div>
-        <div class="grid grid-cols-3 gap-10 2xl:p-20 lg:p-10">
+        <!-- Cards de desaparecidos -->
+        <div class="grid grid-cols-3 gap-10 2xl:p-20 2xl:pt-10 lg:p-10">
           <div class="flex text-white p-5 rounded-lg space-x-5 items-center cardDesaparecido">
             <img class=" h-24 w-24 rounded-full ring-2 ring-white" style="object-fit: cover;" src="https://previews.123rf.com/images/dolgachov/dolgachov1603/dolgachov160306114/54057828-business-people-and-portrait-concept-smiling-businessman-face-or-portrait.jpg" alt="" />
             <div class="flex flex-col justify-between space-y-2">
@@ -175,9 +178,7 @@
             </div>
           </div>
         </div>
-
       </div>
-
     </div>
 </template>
 
@@ -210,8 +211,7 @@ export default {
   }
 
   .cardDesaparecido {
-    background-color: rgba(78, 109, 153, .8);
-    backdrop-filter: blur(5px);
+    background-color: #46638c
   }
 
 </style>

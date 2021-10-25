@@ -39,7 +39,7 @@
             </svg>
           </button>
         </div>
-        <div class="flex justify-center">
+        <div class="flex justify-center my-7">
           <Cropper v-if="registerForm.avatar.src"
             class="my-5"
             ref="cropper"
@@ -47,7 +47,12 @@
             stencil-component="circle-stencil"
             style="max-height:350px; max-width:350px; background-color: white"
           />
-          <img v-else src="/public/profile-picture/none.png" alt="">
+          <div v-else>
+            <MjSkeleton v-if="avatarLoaded==false" rounded class="h-52 w-52"/>
+            <img v-show="avatarLoaded" @load="avatarLoaded = true" src="/public/profile-picture/none.png" alt="">
+          </div>
+          
+          
         </div>
         <div class="flex justify-center space-x-5">
           <button class="rounded-md text-white py-2 px-4 bg-gray-600" @click="resetAvatar">
@@ -66,9 +71,7 @@
       text="Não foi possível concluir o seu cadastro, por favor, tente novamente mais tarde."
       bg-color-class="bg-red-100"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="red">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-      </svg>
+      <MjStatusIcon status="error" />
     </ModalAviso>
     <!-- Aviso de sucesso ao registrar usuário -->
     <ModalAviso @close="$refs.modal.close()" ref="modalSuccessRegister" 
@@ -76,9 +79,7 @@
       text="Sua conta foi criada com sucesso, você já pode utilizar seu nome de usuário e senha na tela de login."
       bg-color-class="bg-green-100"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="green">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-      </svg>
+      <MjStatusIcon status="success" />
     </ModalAviso>
     <!-- Aviso de erro ao preencher o formulário -->
     <ModalAviso ref="modalErrorForm" 
@@ -86,9 +87,7 @@
       text="Um ou mais campos não puderam ser validados, por favor, preencha as informações corretamente"
       bg-color-class="bg-red-100"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="red">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-      </svg>
+      <MjStatusIcon status="error" />
     </ModalAviso>
   </MjModal>
 </template>
@@ -104,6 +103,7 @@ export default {
       registerForm: null,
       modalRegisterContinuar: false,
       registroFinalizado: false,
+      avatarLoaded: false,
     }
   },
 
@@ -133,6 +133,7 @@ export default {
       };
       this.modalRegisterContinuar = false;
       this.registroFinalizado = false;
+      this.avatarLoaded = false;
     },
     validateForm() {
       if (
