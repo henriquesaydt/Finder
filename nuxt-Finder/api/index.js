@@ -16,7 +16,9 @@ const routerUser = require('./routes/user');
 const routerEvento = require('./routes/evento');
 const routerDesaparecido = require('./routes/desaparecido');
 const routerCaracteristica = require('./routes/caracteristica');
-const routerRegister = require('./routes/registrar')
+const routerRegister = require('./routes/registrar');
+//Rotas Públicas
+const routerPublicEvento = require('./routes/public/evento');
 
 app.use(cors());
 app.use(express.json());
@@ -159,6 +161,7 @@ app.get('/auth/logout', verifyJWT, async (req, res, next) => {
   return res.status(500).json({message: "Não foi possível concluir o logout"});
 });
 
+//--------- Rotas Autenticadas -----------
 app.use('/pessoa', verifyJWT, routerPessoa);
 app.use('/animal', verifyJWT, routerAnimal);
 app.use('/atributo', verifyJWT, routerAtributo);
@@ -166,7 +169,9 @@ app.use('/user', verifyJWT, routerUser);
 app.use('/evento', verifyJWT, routerEvento);
 app.use('/desaparecido', verifyJWT, routerDesaparecido);
 app.use('/caracteristica', verifyJWT, routerCaracteristica);
+//----------- Rotas Públicas -------------
 app.use('/register', routerRegister);
+app.use('/public/evento', routerPublicEvento);
 
 export default {
   path: '/api',

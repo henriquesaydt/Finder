@@ -3,65 +3,44 @@
 
       <Navbar/>
 
-      <div class="flex lg:h-5/6 2xl:h-4/6" style="">
+      <div class="flex pEventosMapa">
         <!-- EVENTOS -->
-        <!-- COR: #4c5d78 -->
-        <div class=" lg:w-96 2xl:w-3/12 flex flex-col" style="background-color: #4c5d78;  min-width:17rem">
-          <div class="flex items-center justify-between text-white pl-4 pr-4 space-x-4 pt-4 pb-4">
-            <span class="font-medium text-xl">
-              Eventos
-            </span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
-            </svg>
-          </div>
-          <div class="flex flex-col space-y-5 p-4 lg:pl-6 2xl:pl-10 pt-0 overflow-auto h-full barra">
-            <MjStatusDot />
-            <div class="text-gray-400">
-              <a href="#">
-                <div>
-                  <MjStatusDot status="success"/>
-                  <span class="font-medium ml-2">DESABAMENTO</span><br>
-                  <span>Centro - Marechal Floriano - ES</span><br>
-                  <span>2 Desaparecidos</span>
-                </div>
-              </a>
-            </div>
-            <div class="text-white">
-              <a href="#">
-                <div>
-                  <MjStatusDot status="warning"/>
-                  <span class="font-medium ml-2">DESABAMENTO</span><br>
-                  <span>Centro - Marechal Floriano - ES</span><br>
-                  <span>2 Desaparecidos</span>
-                </div>
-              </a>
-            </div>
-            <div v-for="i in 8" :key="i" class="text-gray-400">
-              <a href="#">
-                <div>
-                  <MjStatusDot status="warning"/>
-                  <span class="font-medium ml-2">Enchente {{ i }}</span><br>
-                  <span>Centro - Marechal Floriano - ES</span><br>
-                  <span>2 Desaparecidos</span>
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
+        <Eventos />
         <!-- MAPA -->
         <GoogleMap class="w-full teste"/>
       </div>
 
       <!-- Descrição do Evento -->
       <div class="flex-none" style="background-color: #2E4059">
-        <div class="flex mt-10 mx-20 p-5 rounded-lg text-white font-medium text-2xl" style="background-color: #46638c">
-          <div>
-            <span>
-              Evento Tal - Centro, Marechal Floriano, Espirito Santo
-            </span>
+        <!-- Cabeçalho -->
+        <div class="flex mt-10 mx-20 py-5 rounded-lg text-white font-medium text-2xl" >
+          <div class="flex flex-1 justify-between">
+            <div class="self-end">
+              <span>
+                Evento Tal - Centro, Marechal Floriano, Espirito Santo
+              </span>
+            </div>
+            <div class="flex space-x-5">
+              <MjButton class=" text-base pl-3" variant="secondary">
+                <div class="flex items-center space-x-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  <span>Adicionar</span>
+                </div>
+              </MjButton>
+              <MjButton class=" text-base pl-3" variant="secondary">
+                <div class="flex items-center space-x-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                  <span>Editar</span>
+                </div>
+              </MjButton>
+            </div>
           </div>
         </div>
+        <hr class="mx-20">
         <!-- Cards de desaparecidos -->
         <div class="grid grid-cols-3 gap-10 2xl:p-20 2xl:pt-10 lg:p-10">
           <div class="flex text-white p-5 rounded-lg space-x-5 items-center cardDesaparecido">
@@ -190,28 +169,18 @@ export default {
 </script>
 
 <style scoped>
-  .barra::-webkit-scrollbar {
-    width: 18px;
-  }
-
-  .barra::-webkit-scrollbar-track {
-    background-color: transparent;
-  }
-
-  .barra::-webkit-scrollbar-thumb {
-    border-radius: 100px;
-    border: 5px solid transparent;
-    background-clip: content-box;
-    background-color: #27374d;
-  }
-
-  .barra {
-    scrollbar-color: #27374d transparent;
-    scrollbar-width: auto;
-  }
-
   .cardDesaparecido {
     background-color: #46638c
   }
 
+  .pEventosMapa {
+    min-height: 33rem;
+  }
+
+  @media (min-width: 1536px) {
+    .pEventosMapa {
+      min-height: 45rem;
+    }
+  }
+  
 </style>

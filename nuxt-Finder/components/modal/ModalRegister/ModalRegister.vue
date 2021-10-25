@@ -174,7 +174,7 @@ export default {
       form.append('nascimento', new Date(this.registerForm.nascimento).toISOString());
       form.append('username', this.registerForm.username);
       form.append('password', this.registerForm.password);
-      this.$axios.post('http://localhost:3000/api/register', form)
+      this.$axios.post('/api/register', form)
       .then(() => {
         this.registroFinalizado = true;
         this.$refs.modalSuccessRegister.open();

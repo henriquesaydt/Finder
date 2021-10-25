@@ -23,6 +23,7 @@ model Evento {
   endereco String?
   bairro String?
   cidade String?
+  uf String? @db.Char(2)
 
   desaparecidos Desaparecido[]
 

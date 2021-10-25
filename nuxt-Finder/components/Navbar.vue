@@ -47,9 +47,9 @@
         </template>
       </MjPopover>
 
-      <button v-else class=" rounded-lg bg-white text-grey-800 font-medium px-5 text-lg" @click="$refs.modalLogin.$refs.modal.open()">
+      <MjButton class="text-white" variant="secondary" @click="$refs.modalLogin.$refs.modal.open()">
         Login
-      </button>
+      </MjButton>
 
       <ModalLogin ref="modalLogin" @register="$refs.modalLogin.$refs.modal.close(); $refs.modalRegister.$refs.modal.open()"/>
 
