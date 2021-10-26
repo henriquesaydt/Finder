@@ -1,15 +1,15 @@
 <template>
     <div class="flex flex-col h-screen">
 
-      <Navbar/>
+      <NavbarMain />
 
       <div class="flex pEventosMapa">
         <!-- EVENTOS -->
-        <Eventos />
+        <EventosNew class="w-4/12 2xl:w-3/12 flex flex-col" v-if="windowNewEvento" @cancelNewEvento="windowNewEvento = false" @raio="raioSelected=$event" style="background-color: #4c5d78;  min-width:19rem"/>
+        <EventosMain class="w-4/12 2xl:w-3/12 flex flex-col" v-else @newEvento="windowNewEvento = true" style="background-color: #4c5d78;  min-width:19rem"/>
         <!-- MAPA -->
-        <GoogleMap class="w-full teste"/>
+        <GoogleMap class="w-full teste" :raio="raioSelected"/>
       </div>
-
       <!-- Descrição do Evento -->
       <div class="flex-none" style="background-color: #2E4059">
         <!-- Cabeçalho -->
@@ -164,7 +164,12 @@
 <script>
 
 export default {
-  
+  data() {
+    return {
+      windowNewEvento: false,
+      raioSelected: null
+    }
+  },
 }
 </script>
 

@@ -7,6 +7,18 @@
 import { Loader } from '@googlemaps/js-api-loader'
 
 export default {
+  data() {
+    return {
+      positionSelected: null,
+      map: null,
+      circuloShape: null
+    }
+  },
+
+  props: {
+    raio: String
+  },
+
   mounted() {
     const mapStyle = [
       { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
@@ -95,33 +107,54 @@ export default {
       version: "weekly"
     });
     loader.load().then( () => {
-      map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: -34.397, lng: 150.644 },
-        zoom: 8,
+      this.map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: -13.706, lng: -55.644 },
+        zoom: 4,
         streetViewControl: false,
         styles: mapStyle
       });
-      circulo = new google.maps.Circle({
+      var marcador = new google.maps.Marker({
+        position: this.positionSelected,
+        map: this.map
+      });
+      this.map.addListener('click', (event) => {
+        marcador.setMap(null);
+        marcador = new google.maps.Marker({
+          position: this.positionSelected = event.latLng,
+          map: this.map
+        });
+        marcador.setMap(this.map);
+        if (this.circuloShape != null) this.circuloShape.setMap(null);
+        this.circuloShape = new google.maps.Circle({
+          strokeColor: "#FF0000",
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: "#FF0000",
+          fillOpacity: 0.35,
+          map: this.map,
+          center: this.positionSelected,
+          radius: parseInt(this.raio),
+        });
+        this.circuloShape.setMap(this.map);
+      })
+    });
+  },
+  watch: {
+    raio: function (val) {
+      val = parseInt(val);
+      if (this.circuloShape != null) this.circuloShape.setMap(null);
+      this.circuloShape = new google.maps.Circle({
         strokeColor: "#FF0000",
         strokeOpacity: 0.8,
         strokeWeight: 2,
         fillColor: "#FF0000",
         fillOpacity: 0.35,
-        map,
-        center: { lat: -34.397, lng: 150.644 },
-        radius: 50000,
+        map: this.map,
+        center: this.positionSelected,
+        radius: val,
       });
-      circulo = new google.maps.Circle({
-        strokeColor: "#30a2e6",
-        strokeOpacity: 0.8,
-        strokeWeight: 2,
-        fillColor: "#56afe3",
-        fillOpacity: 0.35,
-        map,
-        center: { lat: -34.8, lng: 150.644 },
-        radius: 30000,
-      });
-    });
+      this.circuloShape.setMap(this.map);
+    }
   }
 }
 </script>

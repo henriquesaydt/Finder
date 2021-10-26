@@ -51,9 +51,9 @@
         Login
       </MjButton>
 
-      <ModalLogin ref="modalLogin" @register="$refs.modalLogin.$refs.modal.close(); $refs.modalRegister.$refs.modal.open()"/>
+      <NavbarLoginModal ref="modalLogin" @register="$refs.modalLogin.$refs.modal.close(); $refs.modalRegister.$refs.modal.open()"/>
 
-      <ModalRegister ref="modalRegister"/>
+      <NavbarRegisterModal ref="modalRegister"/>
       
     </div>
   </nav>
@@ -119,7 +119,7 @@ export default {
   },
 
   components: {
-    Cropper
+    Cropper,
   }
 }
 </script>

@@ -4,11 +4,11 @@
     <div v-if="!modalRegisterContinuar">
       <form class="flex flex-col space-y-3 py-3 lg:w-3/5 lg:mx-auto font-medium">
 
-        <InputForm v-bind:value.sync="registerForm.nome" name="Nome Completo" type="text"/>
-        <InputForm v-bind:value.sync="registerForm.nascimento" name="Data de Nascimento" type="date"/>
-        <InputForm v-bind:value.sync="registerForm.username" name="Nome de Usuário" type="text"/>
-        <InputForm v-bind:value.sync="registerForm.password" name="Senha" type="password"/>
-        <InputForm :borderColor="senhaValida?'green':'red'" v-bind:value.sync="registerForm.passwordRepeat" name="Repita a Senha" type="password"/>
+        <InputForm v-bind:value.sync="registerForm.nome" title="Nome Completo" type="text"/>
+        <InputForm v-bind:value.sync="registerForm.nascimento" title="Data de Nascimento" type="date"/>
+        <InputForm v-bind:value.sync="registerForm.username" title="Nome de Usuário" type="text"/>
+        <InputForm v-bind:value.sync="registerForm.password" title="Senha" type="password"/>
+        <InputForm :borderColor="senhaValida?'green':'red'" v-bind:value.sync="registerForm.passwordRepeat" title="Repita a Senha" type="password"/>
 
         <div class="flex justify-around items-center mt-2">
           <div>
@@ -95,7 +95,6 @@
 <script>
 import { Cropper } from 'vue-advanced-cropper';
 import 'vue-advanced-cropper/dist/style.css';
-import InputForm from './InputForm.vue';
 
 export default {
   data() {
@@ -216,7 +215,6 @@ export default {
 
   components: {
     Cropper,
-    InputForm,
   }
 }
 </script>

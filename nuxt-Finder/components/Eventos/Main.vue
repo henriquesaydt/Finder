@@ -1,18 +1,20 @@
 <template>
-  <div class=" lg:w-96 2xl:w-3/12 flex flex-col" style="background-color: #4c5d78;  min-width:17rem">
+  <div>
     <div class="flex items-center justify-between text-white pl-4 pr-4 space-x-4 pt-4 pb-4">
       <span class="font-medium text-xl">
         Eventos
       </span>
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
-      </svg>
+      <button type="button" @click="$emit('newEvento')">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+        </svg>
+      </button>
     </div>
     <div class="flex flex-col space-y-5 p-4 lg:pl-4 2xl:pl-8 pt-0 mt-2 overflow-auto h-full barra">
       <div v-for="evento in listaEventos" :key="evento.id">
         <button type="button">
           <div class="flex space-x-5">
-            <div v-show="eventoSelecionadoID == evento.id" class="bg-white" style="width: 4px">
+            <div v-show="eventoSelecionadoID == evento.id" class="bg-white w-1">
             </div>
             <div class="flex flex-col items-start text-white">
               <div class="flex items-center">
@@ -38,7 +40,7 @@ export default {
   data() {
     return {
       listaEventos: [],
-      eventoSelecionadoID: 0
+      eventoSelecionadoID: 1
     }
   },
 
@@ -54,7 +56,6 @@ export default {
           return;
         }
       });
-      console.log('id: ' + eventoID + ' - ' + encontrados);
       return encontrados
     }
   },
