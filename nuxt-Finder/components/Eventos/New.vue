@@ -12,7 +12,7 @@
         <input class="w-full" @input="$emit('raio', $event.target.value)" v-model="raioSelected" type="range" min="1000" max="100000">
       </div>
       <div class="flex justify-center space-x-8">
-        <MjButton @click="$emit('cancelNewEvento')" class=" text-base lg:px-2 2xl:px-5" variant="secondary">
+        <MjButton @click="$emit('newEvento', false)" class=" text-base lg:px-2 2xl:px-5" variant="secondary">
           <div class="flex space-x-2 items-center">
             <span>Cancelar</span>
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -20,7 +20,7 @@
             </svg>
           </div>
         </MjButton>
-        <MjButton class="text-base lg:px-2 2xl:px-5" variant="secondary">
+        <MjButton @click="$emit('addDesaparecido', true)" class="text-base lg:px-2 2xl:px-5" variant="secondary">
           <div class="flex space-x-2 items-center">
             <span>Continuar</span>
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

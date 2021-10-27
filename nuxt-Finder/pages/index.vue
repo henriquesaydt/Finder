@@ -5,8 +5,11 @@
 
       <div class="flex pEventosMapa">
         <!-- EVENTOS -->
-        <EventosNew class="w-4/12 2xl:w-3/12 flex flex-col" v-if="windowNewEvento" @cancelNewEvento="windowNewEvento = false" @raio="raioSelected=$event" style="background-color: #4c5d78;  min-width:19rem"/>
-        <EventosMain class="w-4/12 2xl:w-3/12 flex flex-col" v-else @newEvento="windowNewEvento = true" style="background-color: #4c5d78;  min-width:19rem"/>
+        <div class="w-4/12 2xl:w-3/12 flex flex-col" style="background-color: #4c5d78;  min-width:19rem">
+          <EventosNewDesaparecido class="h-full" v-if="windowAddDesaparecido"/>
+          <EventosNew class="h-full" v-else-if="windowNewEvento" @addDesaparecido="windowAddDesaparecido=$event" @newEvento="windowNewEvento=$event" @raio="raioSelected=$event"/>
+          <EventosMain class="h-full" v-else @newEvento="windowNewEvento=$event"/>
+        </div>
         <!-- MAPA -->
         <GoogleMap class="w-full teste" :raio="raioSelected"/>
       </div>
@@ -75,6 +78,7 @@
 export default {
   data() {
     return {
+      windowAddDesaparecido: false,
       windowNewEvento: false,
       raioSelected: 50000
     }
