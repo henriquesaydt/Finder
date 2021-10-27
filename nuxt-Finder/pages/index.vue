@@ -16,11 +16,14 @@
         <div class="flex mt-10 mx-20 py-5 rounded-lg text-white font-medium text-2xl" >
           <div class="flex flex-1 justify-between">
             <div class="self-end">
-              <span>
-                Evento Tal - Centro, Marechal Floriano, Espirito Santo
-              </span>
+              <p class=" text-4xl mb-3">
+                Evento Tal
+              </p>
+              <p>
+                Centro, Marechal Floriano, Espirito Santo
+              </p>
             </div>
-            <div class="flex space-x-5">
+            <div class="flex space-x-5 items-end">
               <MjButton class=" text-base pl-3" variant="secondary">
                 <div class="flex items-center space-x-2">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -43,101 +46,7 @@
         <hr class="mx-20">
         <!-- Cards de desaparecidos -->
         <div class="grid grid-cols-3 gap-10 2xl:p-20 2xl:pt-10 lg:p-10">
-          <div class="flex text-white p-5 rounded-lg space-x-5 items-center cardDesaparecido">
-            <img class=" h-24 w-24 rounded-full ring-2 ring-white" style="object-fit: cover;" src="https://previews.123rf.com/images/dolgachov/dolgachov1603/dolgachov160306114/54057828-business-people-and-portrait-concept-smiling-businessman-face-or-portrait.jpg" alt="" />
-            <div class="flex flex-col justify-between space-y-2">
-              <div>
-                <span class="text-xl font-medium">
-                  João Paulo, 30 anos
-                </span>
-              </div>
-              <div>
-                <span>
-                  Visto por último: Centro Marechal Floriano asdas das das dasd as dasd asdas 
-                </span>
-              </div>
-              <div class="flex space-x-3 items-center">
-                <MjStatusDot status="warning"/>
-                <span>Situação: Desaparecido à 5 dias</span>
-              </div>
-            </div>
-          </div>
-          <div class="flex text-white p-5 rounded-lg space-x-5 items-center cardDesaparecido">
-            <img class=" h-24 w-24 rounded-full ring-2 ring-white" style="object-fit: cover;" src="https://previews.123rf.com/images/dolgachov/dolgachov1603/dolgachov160306114/54057828-business-people-and-portrait-concept-smiling-businessman-face-or-portrait.jpg" alt="" />
-            <div class="flex flex-col justify-between space-y-2">
-              <div>
-                <span class="text-xl font-medium">
-                  João Paulo, 30 anos
-                </span>
-              </div>
-              <div>
-                <span>
-                  Visto por último: Centro Marechal Floriano asdas das das dasd as dasd asdas 
-                </span>
-              </div>
-              <div class="flex space-x-3 items-center">
-                <MjStatusDot status="warning"/>
-                <span>Situação: Desaparecido à 5 dias</span>
-              </div>
-            </div>
-          </div><div class="flex text-white p-5 rounded-lg space-x-5 items-center cardDesaparecido">
-            <img class=" h-24 w-24 rounded-full ring-2 ring-white" style="object-fit: cover;" src="https://previews.123rf.com/images/dolgachov/dolgachov1603/dolgachov160306114/54057828-business-people-and-portrait-concept-smiling-businessman-face-or-portrait.jpg" alt="" />
-            <div class="flex flex-col justify-between space-y-2">
-              <div>
-                <span class="text-xl font-medium">
-                  João Paulo, 30 anos
-                </span>
-              </div>
-              <div>
-                <span>
-                  Visto por último: Centro Marechal Floriano asdas das das dasd as dasd asdas 
-                </span>
-              </div>
-              <div class="flex space-x-3 items-center">
-                <MjStatusDot status="warning"/>
-                <span>Situação: Desaparecido à 5 dias</span>
-              </div>
-            </div>
-          </div>
-          <div class="flex text-white p-5 rounded-lg space-x-5 items-center cardDesaparecido">
-            <img class=" h-24 w-24 rounded-full ring-2 ring-white" style="object-fit: cover;" src="https://previews.123rf.com/images/dolgachov/dolgachov1603/dolgachov160306114/54057828-business-people-and-portrait-concept-smiling-businessman-face-or-portrait.jpg" alt="" />
-            <div class="flex flex-col justify-between space-y-2">
-              <div>
-                <span class="text-xl font-medium">
-                  João Paulo, 30 anos
-                </span>
-              </div>
-              <div>
-                <span>
-                  Visto por último: Centro Marechal Floriano asdas das das dasd as dasd asdas 
-                </span>
-              </div>
-              <div class="flex space-x-3 items-center">
-                <MjStatusDot status="warning"/>
-                <span>Situação: Desaparecido à 5 dias</span>
-              </div>
-            </div>
-          </div>
-          <div class="flex text-white p-5 rounded-lg space-x-5 items-center cardDesaparecido">
-            <img class=" h-24 w-24 rounded-full ring-2 ring-white" style="object-fit: cover;" src="https://previews.123rf.com/images/dolgachov/dolgachov1603/dolgachov160306114/54057828-business-people-and-portrait-concept-smiling-businessman-face-or-portrait.jpg" alt="" />
-            <div class="flex flex-col justify-between space-y-2">
-              <div>
-                <span class="text-xl font-medium">
-                  João Paulo, 30 anos
-                </span>
-              </div>
-              <div>
-                <span>
-                  Visto por último: Centro Marechal Floriano asdas das das dasd as dasd asdas 
-                </span>
-              </div>
-              <div class="flex space-x-3 items-center">
-                <MjStatusDot status="warning"/>
-                <span>Situação: Desaparecido à 5 dias</span>
-              </div>
-            </div>
-          </div>
-          <div class="flex text-white p-5 rounded-lg space-x-5 items-center cardDesaparecido">
+          <div v-for="i in 6" :key="i" class="flex text-white p-5 rounded-lg space-x-5 items-center cardDesaparecido">
             <img class=" h-24 w-24 rounded-full ring-2 ring-white" style="object-fit: cover;" src="https://previews.123rf.com/images/dolgachov/dolgachov1603/dolgachov160306114/54057828-business-people-and-portrait-concept-smiling-businessman-face-or-portrait.jpg" alt="" />
             <div class="flex flex-col justify-between space-y-2">
               <div>
@@ -167,7 +76,7 @@ export default {
   data() {
     return {
       windowNewEvento: false,
-      raioSelected: null
+      raioSelected: 50000
     }
   },
 }
