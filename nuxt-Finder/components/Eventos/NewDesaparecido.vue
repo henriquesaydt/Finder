@@ -16,17 +16,18 @@
           </MjListItem>
           <MjListItem>
             <div class="flex pt-2">
-              <button class="flex flex-1 items-center justify-center space-x-2" type="button">
+              <button @click="$refs.modalNew.$refs.modal.open()" class="flex flex-1 items-center justify-center space-x-2" type="button">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
                   </svg>
                   <p class="font-medium">Adicionar</p>
               </button>
+              <EventosAddDesaparecidoModal ref="modalNew"/>
             </div>
           </MjListItem>
         </MjList>
         <div class="flex justify-center space-x-8 pt-5">
-          <MjButton @click="$emit('newEvento', false)" class=" text-base lg:px-2 2xl:px-5" variant="secondary">
+          <MjButton @click="$emit('addDesaparecido', false)" class=" text-base lg:px-2 2xl:px-5" variant="secondary">
             <div class="flex space-x-2 items-center">
               <span>Cancelar</span>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -34,7 +35,7 @@
               </svg>
             </div>
           </MjButton>
-          <MjButton @click="$emit('addDesaparecido', true)" class="text-base lg:px-2 2xl:px-5" variant="secondary">
+          <MjButton class="text-base lg:px-2 2xl:px-5" variant="secondary">
             <div class="flex space-x-2 items-center">
               <span>Continuar</span>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

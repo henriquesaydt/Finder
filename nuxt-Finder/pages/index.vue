@@ -6,7 +6,7 @@
       <div class="flex pEventosMapa">
         <!-- EVENTOS -->
         <div class="w-4/12 2xl:w-3/12 flex flex-col" style="background-color: #4c5d78;  min-width:19rem">
-          <EventosNewDesaparecido class="h-full" v-if="windowAddDesaparecido"/>
+          <EventosNewDesaparecido class="h-full" v-if="windowAddDesaparecido" @addDesaparecido="windowAddDesaparecido=$event"/>
           <EventosNew class="h-full" v-else-if="windowNewEvento" @addDesaparecido="windowAddDesaparecido=$event" @newEvento="windowNewEvento=$event" @raio="raioSelected=$event"/>
           <EventosMain class="h-full" v-else @newEvento="windowNewEvento=$event"/>
         </div>
