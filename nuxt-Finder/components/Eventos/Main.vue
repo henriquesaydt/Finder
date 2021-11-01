@@ -13,7 +13,7 @@
     </div>
     <div class="flex flex-col space-y-5 p-4 lg:pl-4 2xl:pl-8 pt-0 mt-2 overflow-auto h-full barra">
       <div v-for="evento in listaEventos" :key="evento.id">
-        <button @click="eventoSelecionadoID = evento.id; $emit('eventoSelecionado', evento)" type="button">
+        <button class="w-full" @click="eventoSelecionadoID = evento.id; $emit('eventoSelecionado', evento)" type="button">
           <div class="flex space-x-5">
             <div v-show="eventoSelecionadoID == evento.id" class="bg-white w-1">
             </div>
@@ -23,7 +23,7 @@
                 <span class="font-medium text-lg 2xl:text-xl ml-2 pb-1" style="text-align: left">{{ evento.nome }}</span><br>
               </div>
               <div class="flex">
-                <span style="text-align: left">{{ evento.bairro }}, {{ evento.endereco }} - {{ evento.cidade }} - {{ evento.uf }}</span>
+                <span style="text-align: left">{{ evento.cidade }} - {{ evento.uf }}</span>
               </div>
               <div>
                 Desaparecidos: {{ evento.desaparecidos.length }}

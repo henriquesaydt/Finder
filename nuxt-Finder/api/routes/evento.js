@@ -133,11 +133,12 @@ router.post('/', authorization, async (req, res) => {
     endereco: req.body.endereco,
     bairro: req.body.bairro,
     cidade: req.body.cidade,
+    uf: req.body.uf,
     criado_por: req.token.userId,
     criado_ip: req.ip
   }
 
-  if (req.body.nome && ((newEvento.localidade_x && newEvento.localidade_y) || (newEvento.endereco && newEvento.bairro && newEvento.cidade))) {
+  if (req.body.nome && ((newEvento.localidade_x && newEvento.localidade_y) || (newEvento.endereco && newEvento.bairro && newEvento.cidade && newEvento.uf))) {
     try {
       const rows = await prisma.evento.create({
         data: newEvento
@@ -162,6 +163,52 @@ router.post('/', authorization, async (req, res) => {
     return res.status(400).json({
       status: "error",
       message: "Parâmetros inválidos"
+    });
+  }
+});
+
+router.post('/:eventoId', authorization, async (req, res) => {
+  try {
+    var rows = await prisma.evento.findUnique({
+      where: {
+        id: parseInt(req.params.eventoId)
+      }
+    });
+  } 
+  catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      status: "error",
+      message: "Não foi possível localizar o evento"
+    });
+  }
+  if (rows.criado_por == req.token.userId) {
+    try {
+      var rows = await prisma.evento.update({
+        where: {
+          id: parseInt(req.params.eventoId)
+        },
+        data: {
+          ativo: true
+        }
+      });
+      return res.status(200).json({
+        status: "success",
+        message: "Evento ativado com sucesso"
+      })
+    } 
+    catch (err) {
+      console.log(err);
+      return res.status(500).json({
+        status: "error",
+        message: "Não foi possível ativar esse evento"
+      });
+    }
+  }
+  else {
+    return res.status(403).json({
+      status: "error",
+      message: "Acesso negado"
     });
   }
 });

@@ -11,12 +11,12 @@
         </div>
         <div class="flex justify-center items-center lg:w-96 md:ml-5 ">
           <button type="button" @click="$refs.sendPicture.click()">
-            <div v-if="desaparecidoForm.avatar.src == null">
+            <div v-if="desaparecidoForm.avatar == null">
               <MjSkeleton v-if="avatarLoaded==false" rounded class="h-52 w-52"/>
               <img v-show="avatarLoaded" @load="avatarLoaded = true" src="/public/profile-picture/none.png" alt="">
             </div>
             <div v-else>
-              <img :src="desaparecidoForm.avatar.src" style="max-height: 270px">
+              <img :src="desaparecidoForm.avatar" style="max-height: 270px">
             </div>
             <input class="hidden" type="file" ref="sendPicture" @change="loadImage($event)" accept="image/*">
           </button>
@@ -67,44 +67,69 @@ export default {
 
   methods: {
     resetAvatar() {
-      this.desaparecidoForm.avatar = {
-        src: null,
-        type: null
-      }
+      this.desaparecidoForm.avatar = null
     },
     resetData() {
       this.desaparecidoForm = {
         nome: null,
-        nascimento: null,
         detalhes: null,
-        avatar: {
-          src: null,
-          type: null
-        }
+        avatar: null,
+        pictureFile: null
       }
     },
 
     loadImage(event) {
-      this.resetAvatar();
+      this.desaparecidoForm.pictureFile = event.target.files[0];
 			const { files } = event.target;
 			if (files && files[0]) {
-				if (this.desaparecidoForm.avatar.src) {
-					URL.revokeObjectURL(this.desaparecidoForm.avatar.src)
+				if (this.desaparecidoForm.avatar) {
+					URL.revokeObjectURL(this.desaparecidoForm.avatar)
 				}
 				const blob = URL.createObjectURL(files[0]);
 				const reader = new FileReader();
 				reader.onload = (e) => {
-					this.desaparecidoForm.avatar = {
-						src: blob,
-					};
+					this.desaparecidoForm.avatar = blob;
 				};
 				reader.readAsArrayBuffer(files[0]);
 			}
       this.$refs.sendPicture.value=null;
 		},
 
-    addDesaparecido() {
-      
+    async addDesaparecido() {
+      if (
+        this.desaparecidoForm.nome != '' && this.desaparecidoForm.nome != null &&
+        this.desaparecidoForm.detalhes != '' && this.desaparecidoForm.detalhes != null
+      ) 
+      {
+        try {
+          var resPessoa = await this.$axios.post('/api/pessoa', {
+            nome: this.desaparecidoForm.nome
+          });
+          var resDesaparecido = await this.$axios.post('/api/desaparecido', {
+            pessoa_id: resPessoa.data.recurso.id,
+            detalhes: this.desaparecidoForm.detalhes,
+            eventoId: this.eventoId,
+          })
+          var formdata = new FormData();
+          formdata.append('upload', this.desaparecidoForm.pictureFile);
+          var resDesaparecidoPicture = await this.$axios.post('/api/desaparecido/'+resDesaparecido.data.recurso.id+'/picture', 
+            formdata
+          );
+          if (resDesaparecidoPicture) {
+            this.$root.$emit('toast', ['success', 'Pessoa adicionada.']);
+            this.$emit('adicionado');
+            this.$refs.modal.close();
+            return;
+          }
+        }
+        catch (err) {}
+        this.$root.$emit('toast', ['error', 'Ocorreu um erro ao adicionar essa pessoa, por favor, tente novamente']);
+        this.$refs.modal.close();
+        return;
+      }
+      else {
+        this.$root.$emit('toast', ['error', 'Por favor, preencha todos os dados']);
+      }
     }
   },
 

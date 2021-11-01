@@ -25,7 +25,7 @@
                   </svg>
                   <p class="font-medium">Adicionar</p>
               </button>
-              <EventosAddDesaparecidoModal ref="modalNew" :eventoId="eventoId"/>
+              <EventosAddDesaparecidoModal ref="modalNew" :eventoId="eventoId" @adicionado="getDesaparecidos"/>
             </div>
           </MjListItem>
         </MjList>
@@ -38,17 +38,36 @@
               </svg>
             </div>
           </MjButton>
-          <MjButton class="text-base lg:px-2 2xl:px-5" variant="secondary">
+          <MjButton @click="checkEvento" class="text-base lg:px-2 2xl:px-5" variant="secondary">
             <div class="flex space-x-2 items-center">
-              <span>Continuar</span>
+              <span>Finalizar</span>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
             </div>
           </MjButton>
         </div>
       </div>
     </div>
+    <MjModal ref="modalConfirma">
+      <div class="flex flex-col space-y-4">
+        <div class="text-lg font-medium text-cyan-900">
+          Deseja finalizar a criação desse evento?
+        </div>
+        <div class="flex space-x-4 justify-end">
+          <MjButton @click="$refs.modalConfirma.close()" class="text-base px-6 bg-cyan-900" variant="secondary">
+            <div class="flex space-x-2 items-center text-white">
+              <span>Não</span>
+            </div>
+          </MjButton>
+          <MjButton @click="finalizarEvento" class="text-base px-6 bg-cyan-900" variant="secondary">
+            <div class="flex space-x-2 items-center text-white">
+              <span>Sim</span>
+            </div>
+          </MjButton>
+        </div>
+      </div>
+    </MjModal>
     <MjToast class="text-cyan-900 text-lg font-medium" ref="toast"/>
   </div>
 </template>
@@ -74,6 +93,24 @@ export default {
       .catch(err => {
         this.$refs.toast.error('Um erro inesperado ocorreu ao atualizar a lista de desaparecidos, por favor, tente novamente.');
       })
+    },
+    checkEvento() {
+      if (this.desaparecidoList.length > 0) {
+        this.$refs.modalConfirma.open()
+      }
+      else {
+        this.$refs.toast.error('Você precisa adicionar ao menos uma pessoa ao evento.');
+      }
+    },
+    finalizarEvento() {
+      this.$axios.post('/api/evento/'+this.eventoId)
+      .then(() => {
+        this.$root.$emit('toast', ['success', 'Evento criado com sucesso.']);
+        this.$emit('eventoWindow', 0);
+      })
+      .catch(() => {
+        this.$root.$emit('toast', ['error', 'Ocorreu um erro ao finalizar esse evento, por favor, tente novamente.']);
+      });
     }
   },
 

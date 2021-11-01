@@ -14,11 +14,9 @@
           <option v-for="uf in UFList" :key="uf[1]" :value="uf[1]">{{ uf[0] }}</option>
         </select>
       </div>
-      
-      
       <div>
         <span class="font-medium">Clique no mapa para selecionar a área aproximada, em seguida, escolha o alcance do evento</span>
-        <input class="w-full" @input="$emit('raio', parseInt($event.target.value))" v-model="raioSelected" type="range" min="1000" max="100000">
+        <input class="w-full" @input="$emit('raio', parseInt($event.target.value))" v-model="eventoForm.localidade_r" type="range" min="1000" max="100000">
       </div>
       <div class="flex justify-center space-x-8">
         <MjButton @click="$emit('eventoWindow', 0)" class=" text-base lg:px-2 2xl:px-5" variant="secondary">
@@ -56,7 +54,6 @@ export default {
   data() {
     return {
       eventoForm: null,
-      raioSelected: 50000,
       UFList: [
         ['Acre', 'AC'],
         ['Alagoas', 'AL'],
@@ -113,7 +110,7 @@ export default {
       if (this.formValid()) {
         this.eventoForm.localidade_x = this.positionSelected.lat.toString();
         this.eventoForm.localidade_y = this.positionSelected.lng.toString();
-        this.eventoForm.localidade_r = this.raioSelected;
+        this.eventoForm.localidade_r = parseInt(this.eventoForm.localidade_r);
         this.eventoForm.data = new Date(this.eventoForm.data).toISOString();
         this.$axios.post('/api/evento', this.eventoForm)
         .then(res => {
@@ -130,6 +127,11 @@ export default {
     },
 
     formValid() {
+      if (this.positionSelected) {
+        this.eventoForm.localidade_x = this.positionSelected.lat;
+        this.eventoForm.localidade_y = this.positionSelected.lng;
+      }
+      console.log(this.eventoForm);
       var isValid = true;
       const requiredFields = ['nome', 'descricao', 'data', 'cidade', 'uf', 'localidade_x', 'localidade_y'];
       for (let field of requiredFields) {

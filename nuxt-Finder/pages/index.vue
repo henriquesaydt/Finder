@@ -35,7 +35,7 @@
                 {{ eventoSelecionado.nome }}
               </p>
               <p>
-                {{ eventoSelecionado.bairro }}, {{ eventoSelecionado.endereco }}, {{ eventoSelecionado.cidade }}, {{ eventoSelecionado.uf }}
+                <span v-if="eventoSelecionado.bairro">{{ eventoSelecionado.bairro }}, </span><span v-if="eventoSelecionado.endereco">{{ eventoSelecionado.endereco }}, </span> {{ eventoSelecionado.cidade }}, {{ eventoSelecionado.uf }}
               </p>
             </div>
             <div class="flex space-x-5 items-end">
@@ -61,12 +61,12 @@
         <hr class="mx-10 2xl:mx-20">
         <!-- Cards de desaparecidos -->
         <div class="grid grid-cols-2 xl:grid-cols-3 gap-10 2xl:p-20 2xl:pt-10 lg:p-10">
-          <div v-for="desaparecido in desaparecidosEvento" :key="desaparecido.id" class="flex text-white p-5 rounded-lg space-x-5 items-center cardDesaparecido">
-            <img class=" h-24 w-24 rounded-full ring-2 ring-white" style="object-fit: cover;" src="https://previews.123rf.com/images/dolgachov/dolgachov1603/dolgachov160306114/54057828-business-people-and-portrait-concept-smiling-businessman-face-or-portrait.jpg" alt="" />
+          <div v-for="desaparecido in listaDesaparecidos" :key="desaparecido.id" class="flex text-white p-5 rounded-lg space-x-5 items-center cardDesaparecido">
+            <img class=" h-24 w-24 rounded-full ring-2 ring-white" style="object-fit: cover;" :src="'/public/desaparecido-picture/'+desaparecido.avatar" alt="" />
             <div class="flex flex-col justify-between space-y-2">
               <div>
                 <span class="text-xl font-medium">
-                  {{ desaparecido.pessoa.nome }}, {{new Date(desaparecido.pessoa.nascimento.getFullYear())}}
+                  {{ desaparecido.pessoa.nome }}<span v-if="desaparecido.pessoa.nascimento">, {{new Date(desaparecido.pessoa.nascimento.getFullYear())}} anos</span>
                 </span>
               </div>
               <div>
@@ -76,7 +76,7 @@
               </div>
               <div class="flex space-x-3 items-center">
                 <MjStatusDot status="warning"/>
-                <span>Situação: Desaparecido à {{ diasDesaparecido(desaparecido.criado_em) }} dias</span>
+                <span>Situação: Desaparecido à {{ diasDesaparecido(eventoSelecionado.data) }} dias</span>
               </div>
             </div>
           </div>
@@ -90,13 +90,13 @@
 </template>
 
 <script>
-
 export default {
   data() {
     return {
       eventoId: null,
       eventoWindow: 0,
       eventoSelecionado: null,
+      listaDesaparecidos: [],
       windowAddDesaparecido: false,
       windowNewEvento: false,
       raioSelected: 50000,
@@ -116,18 +116,28 @@ export default {
     }
   },
 
-  computed: {
-    desaparecidosEvento() {
-      if (this.eventoSelecionado) {
-        this.$axios.get('/api/public/desaparecido?eventoId='+this.eventoSelecionado.id)
-        .then(res => {
-          return res.data
-        })
-        .catch(err => {
-          this.$refs.toast.error('Um erro inesperado ocorreu ao carregar o evento, por favor, tente novamente.')
-        })
-      }
+  watch: {
+    eventoSelecionado: function (val) {
+      this.$axios.get('/api/public/desaparecido?eventoId='+val.id)
+      .then((res) => {
+        this.listaDesaparecidos = res.data;
+        console.log(this.listaDesaparecidos);
+      })
+      .catch(() => {
+        this.$refs.toast.error('Um erro inesperado ocorreu ao carregar o evento, por favor, tente novamente.');
+      });
     }
+  },
+
+  created() {
+    this.$root.$on('toast', event => {
+      if (event[0] == "error") {
+        this.$refs.toast.error(event[1]);
+      }
+      else {
+        this.$refs.toast.success(event[1]);
+      }
+    })
   }
 }
 </script>
@@ -138,12 +148,14 @@ export default {
   }
 
   .pEventosMapa {
-    height: 33rem;
+    min-height: 33rem;
+    max-height: 33rem;
   }
 
   @media (min-width: 1536px) {
     .pEventosMapa {
-      height: 42rem;
+      min-height: 42rem;
+      max-height: 42rem;
     }
   }
   

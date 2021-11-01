@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     for (var desaparecido of rows) {
       const pessoa = await prisma.pessoa.findUnique({
         where: {
-          id: desaparecido.id
+          id: desaparecido.pessoa_id
         }
       });
       desaparecido.pessoa = pessoa;

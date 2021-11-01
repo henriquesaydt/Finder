@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
+const md5 = require('md5');
 
 //ID do recurso no banco
 const recursoId = 6;
@@ -58,7 +59,7 @@ async function authorization (req, res, next) {
   }
 }
 
-//Querys: pesquisar
+//Querys: pesquisar, eventoId
 router.get('/', authorization, async (req, res) => {
   var rows = null;
   try {
@@ -163,6 +164,53 @@ router.post('/', authorization, async (req, res) => {
       message: "Parâmetros inválidos"
     });
   }
+});
+
+//Multer
+const multer = require('multer');
+const multerStorage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, 'static/public/desaparecido-picture'); //Caminho das fotos de desaparecidos
+  },
+  filename: function(req, file, cb) {
+    cb(null, md5(Date.now().toString()) + '.png'); //Nome da foto: md5 da data atual e extensão png
+  }
+});
+const upload = multer({ storage: multerStorage });
+
+router.post('/:desaparecidoId/picture', authorization, upload.single('upload'), async (req, res) => {
+  if (req.params.desaparecidoId) {
+    try {
+      var picture = req.file ? req.file.filename : 'none.png';
+      var desaparecido = await prisma.desaparecido.update({
+        where: {
+          id: parseInt(req.params.desaparecidoId)
+        },
+        data: {
+          avatar: picture
+        }
+      });
+      if (desaparecido) {
+        return res.status(200).json({
+          stauts: "success",
+          message: "Foto adicionada com sucesso"
+        });
+      }
+    }
+    catch (err) {
+      console.log(err);
+    }
+    fs.unlinkSync('static/public/desaparecido-picture/' + req.file.filename);
+    return res.status(500).json({
+      status: "error",
+      message: "Não foi possível atualizar a foto dessa pessoa"
+    });
+  }
+  fs.unlinkSync('static/public/desaparecido-picture/' + req.file.filename);
+  return res.status(400).json({
+    status: "error",
+    message: "Parâmetros inválidos"
+  });
 });
 
 router.delete('/', authorization, async (req, res) => {
