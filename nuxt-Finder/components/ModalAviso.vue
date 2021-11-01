@@ -10,7 +10,7 @@
         <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-50 text-center sm:text-left">
           {{ title }}
         </h3> 
-        <p class="pt-2 text-gray-800 dark:text-gray-300">
+        <p class="pt-2 text-gray-800 dark:text-gray-300 text-justify">
           {{ text }}
         </p>
       </div>

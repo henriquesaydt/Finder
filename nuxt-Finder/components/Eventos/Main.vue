@@ -1,18 +1,19 @@
+<!-- EventoWindow = 0 -->
 <template>
-  <div>
+  <div class="flex flex-col">
     <div class="flex items-center justify-between text-white pl-4 pr-4 space-x-4 pt-4 pb-4">
-      <span class="font-medium text-xl">
+      <span class="font-medium text-2xl">
         Eventos
       </span>
-      <button type="button" @click="$emit('newEvento', true)">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+      <button type="button" @click="newEvento">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       </button>
     </div>
     <div class="flex flex-col space-y-5 p-4 lg:pl-4 2xl:pl-8 pt-0 mt-2 overflow-auto h-full barra">
       <div v-for="evento in listaEventos" :key="evento.id">
-        <button type="button">
+        <button @click="eventoSelecionadoID = evento.id; $emit('eventoSelecionado', evento)" type="button">
           <div class="flex space-x-5">
             <div v-show="eventoSelecionadoID == evento.id" class="bg-white w-1">
             </div>
@@ -40,7 +41,7 @@ export default {
   data() {
     return {
       listaEventos: [],
-      eventoSelecionadoID: 1
+      eventoSelecionadoID: 0
     }
   },
 
@@ -57,6 +58,15 @@ export default {
         }
       });
       return encontrados
+    },
+
+    newEvento() {
+      if (this.$auth.loggedIn) {
+        this.$emit('eventoWindow', 1);
+      }
+      else {
+        this.$emit('loginWindow');
+      }
     }
   },
 
@@ -73,23 +83,5 @@ export default {
 </script>
 
 <style scoped>
-  .barra::-webkit-scrollbar {
-    width: 18px;
-  }
 
-  .barra::-webkit-scrollbar-track {
-    background-color: transparent;
-  }
-
-  .barra::-webkit-scrollbar-thumb {
-    border-radius: 100px;
-    border: 5px solid transparent;
-    background-clip: content-box;
-    background-color: #27374d;
-  }
-
-  .barra {
-    scrollbar-color: #27374d transparent;
-    scrollbar-width: auto;
-  }
 </style>

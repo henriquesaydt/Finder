@@ -122,6 +122,7 @@ export default {
             position: this.positionSelected = event.latLng,
             map: this.map
           });
+          this.$emit('positionSelected', this.positionSelected.toJSON());
           this.marker.setMap(this.map);
           this.circuloShape = new google.maps.Circle({
             strokeColor: "#FF0000",
@@ -131,7 +132,7 @@ export default {
             fillOpacity: 0.35,
             map: this.map,
             center: this.positionSelected,
-            radius: parseInt(this.raio),
+            radius: this.raio,
           });
           this.circuloShape.setMap(this.map);
         });
@@ -142,7 +143,6 @@ export default {
     raio: function (val) {
       if (this.circuloShape != null) this.circuloShape.setMap(null);
       if (this.editing) {
-        val = parseInt(val);
         if (this.circuloShape != null) this.circuloShape.setMap(null);
         this.circuloShape = new google.maps.Circle({
           strokeColor: "#FF0000",

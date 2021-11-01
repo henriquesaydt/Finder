@@ -1,29 +1,41 @@
 <template>
-    <div class="flex flex-col h-screen">
+    <div class="flex flex-col h-screen" style="background-color:#2E4059">
 
-      <NavbarMain />
+      <NavbarMain ref="navbar"/>
 
       <div class="flex pEventosMapa">
         <!-- EVENTOS -->
-        <div class="w-4/12 2xl:w-3/12 flex flex-col" style="background-color: #4c5d78;  min-width:19rem">
-          <EventosNewDesaparecido class="h-full" v-if="windowAddDesaparecido" @addDesaparecido="windowAddDesaparecido=$event"/>
-          <EventosNew class="h-full" v-else-if="windowNewEvento" @addDesaparecido="windowAddDesaparecido=$event" @newEvento="windowNewEvento=$event" @raio="raioSelected=$event"/>
-          <EventosMain class="h-full" v-else @newEvento="windowNewEvento=$event"/>
+        <div class="w-5/12 xl:w-4/12 2xl:w-3/12 flex flex-col" style="background-color: #4c5d78;  min-width:19rem;">
+          <EventosListaDesaparecido class="h-full" v-if="eventoWindow == 2"
+            @eventoWindow="eventoWindow=$event" 
+            :eventoId="eventoId"
+          />
+          <EventosNew class="h-full" v-else-if="eventoWindow == 1" 
+            @eventoWindow="eventoWindow=$event" 
+            @raio="raioSelected=$event" 
+            @eventoId="eventoId=$event"
+            :positionSelected="positionSelected" 
+          />
+          <EventosMain class="h-full" v-else 
+            @eventoWindow="eventoWindow=$event" 
+            @loginWindow="$refs.navbar.loginWindow()"
+            @eventoSelecionado="eventoSelecionado=$event"
+          />
         </div>
         <!-- MAPA -->
-        <GoogleMap class="w-full teste" :raio="raioSelected"/>
+        <GoogleMap class="w-full teste" :raio="raioSelected" @positionSelected="positionSelected=$event"/>
       </div>
       <!-- Descrição do Evento -->
-      <div class="flex-none" style="background-color: #2E4059">
+      <div v-if="eventoSelecionado" class="flex-none" style="background-color: #2E4059">
         <!-- Cabeçalho -->
-        <div class="flex mt-10 mx-20 py-5 rounded-lg text-white font-medium text-2xl" >
+        <div class="flex mt-10 mx-10 2xl:mx-20 py-5 rounded-lg text-white font-medium text-2xl" >
           <div class="flex flex-1 justify-between">
             <div class="self-end">
               <p class=" text-4xl mb-3">
-                Evento Tal
+                {{ eventoSelecionado.nome }}
               </p>
               <p>
-                Centro, Marechal Floriano, Espirito Santo
+                {{ eventoSelecionado.bairro }}, {{ eventoSelecionado.endereco }}, {{ eventoSelecionado.cidade }}, {{ eventoSelecionado.uf }}
               </p>
             </div>
             <div class="flex space-x-5 items-end">
@@ -46,30 +58,34 @@
             </div>
           </div>
         </div>
-        <hr class="mx-20">
+        <hr class="mx-10 2xl:mx-20">
         <!-- Cards de desaparecidos -->
-        <div class="grid grid-cols-3 gap-10 2xl:p-20 2xl:pt-10 lg:p-10">
-          <div v-for="i in 6" :key="i" class="flex text-white p-5 rounded-lg space-x-5 items-center cardDesaparecido">
+        <div class="grid grid-cols-2 xl:grid-cols-3 gap-10 2xl:p-20 2xl:pt-10 lg:p-10">
+          <div v-for="desaparecido in desaparecidosEvento" :key="desaparecido.id" class="flex text-white p-5 rounded-lg space-x-5 items-center cardDesaparecido">
             <img class=" h-24 w-24 rounded-full ring-2 ring-white" style="object-fit: cover;" src="https://previews.123rf.com/images/dolgachov/dolgachov1603/dolgachov160306114/54057828-business-people-and-portrait-concept-smiling-businessman-face-or-portrait.jpg" alt="" />
             <div class="flex flex-col justify-between space-y-2">
               <div>
                 <span class="text-xl font-medium">
-                  João Paulo, 30 anos
+                  {{ desaparecido.pessoa.nome }}, {{new Date(desaparecido.pessoa.nascimento.getFullYear())}}
                 </span>
               </div>
               <div>
-                <span>
-                  Visto por último: Centro Marechal Floriano asdas das das dasd as dasd asdas 
-                </span>
+                <div style="text-align: justify;">
+                  {{ desaparecido.detalhes }}
+                </div>
               </div>
               <div class="flex space-x-3 items-center">
                 <MjStatusDot status="warning"/>
-                <span>Situação: Desaparecido à 5 dias</span>
+                <span>Situação: Desaparecido à {{ diasDesaparecido(desaparecido.criado_em) }} dias</span>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <div v-else class="flex flex-1 justify-center items-center text-3xl font-medium text-white">
+        Selecione um evento para ver os detalhes.
+      </div>
+      <MjToast class="text-cyan-900 text-lg font-medium" ref="toast"/>
     </div>
 </template>
 
@@ -78,11 +94,41 @@
 export default {
   data() {
     return {
+      eventoId: null,
+      eventoWindow: 0,
+      eventoSelecionado: null,
       windowAddDesaparecido: false,
       windowNewEvento: false,
-      raioSelected: 50000
+      raioSelected: 50000,
+      positionSelected: {
+        lat: null,
+        lng: null
+      },
     }
   },
+
+  methods: {
+    diasDesaparecido(dia) {
+      const desaparecimento = new Date(dia);
+      const atual = new Date();
+      const diff = Math.abs(atual - desaparecimento);
+      return Math.round(diff / (1000 * 60 * 60 * 24));
+    }
+  },
+
+  computed: {
+    desaparecidosEvento() {
+      if (this.eventoSelecionado) {
+        this.$axios.get('/api/public/desaparecido?eventoId='+this.eventoSelecionado.id)
+        .then(res => {
+          return res.data
+        })
+        .catch(err => {
+          this.$refs.toast.error('Um erro inesperado ocorreu ao carregar o evento, por favor, tente novamente.')
+        })
+      }
+    }
+  }
 }
 </script>
 
@@ -92,13 +138,35 @@ export default {
   }
 
   .pEventosMapa {
-    min-height: 33rem;
+    height: 33rem;
   }
 
   @media (min-width: 1536px) {
     .pEventosMapa {
-      min-height: 45rem;
+      height: 42rem;
     }
   }
   
+</style>
+
+<style>
+  .barra::-webkit-scrollbar {
+    width: 18px;
+  }
+
+  .barra::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  .barra::-webkit-scrollbar-thumb {
+    border-radius: 100px;
+    border: 5px solid transparent;
+    background-clip: content-box;
+    background-color: #27374d;
+  }
+
+  .barra {
+    scrollbar-color: #27374d transparent;
+    scrollbar-width: auto;
+  }
 </style>

@@ -12,13 +12,13 @@ generator client {
 
 model Evento {
   id Int @id @default(autoincrement())
-  ativo Boolean @default(true)
+  ativo Boolean @default(false)
   nome String
   descricao String?
   data DateTime @default(now())
 
-  localidade_x String? @db.Char(11)
-  localidade_y String? @db.Char(11)
+  localidade_x String? @db.Char(19)
+  localidade_y String? @db.Char(19)
   localidade_r Int? @db.MediumInt
   endereco String?
   bairro String?
@@ -81,6 +81,7 @@ model Desaparecido {
   evento Evento @relation(fields: [eventoId], references: [id])
   eventoId Int
   encontrado Boolean @default(false)
+  avatar String @default("none.png")
 
   criado_em DateTime @default(now())
   criado_por Int?
@@ -149,7 +150,7 @@ model User {
   username String @unique
   password String
   flags Int @default(0)
-  avatar String?
+  avatar String @default("none.png")
   tokenWhiteList TokenWhiteList[]
   grupoUsuario GrupoUsuario[]
 

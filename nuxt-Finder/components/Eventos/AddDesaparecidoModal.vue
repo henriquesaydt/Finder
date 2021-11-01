@@ -1,5 +1,5 @@
 <template>
-  <MjModal ref="modal" size="lg" :dismissible="true">
+  <MjModal @close="resetData" ref="modal" size="lg" :dismissible="false">
     <form class="space-y-5">
       <div class="flex-none md:flex justify-between">
         <div class="space-y-5 w-full md:w-10/12">
@@ -23,7 +23,7 @@
         </div>
       </div>
       <div class="flex justify-center space-x-5">
-        <MjButton @click="$emit('newEvento', false)" class=" text-cyan-900 lg:px-2 2xl:px-5" variant="secondary">
+        <MjButton @click="$refs.modal.close()" class=" text-cyan-900 lg:px-2 2xl:px-5" variant="secondary">
           <div class="flex space-x-2 items-center">
             <span>Cancelar</span>
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -31,7 +31,7 @@
             </svg>
           </div>
         </MjButton>
-        <MjButton @click="$emit('newEvento', false)" class=" text-cyan-900 lg:px-2 2xl:px-5" variant="secondary">
+        <MjButton @click="addDesaparecido" class=" text-cyan-900 lg:px-2 2xl:px-5" variant="secondary">
           <div class="flex space-x-2 items-center">
             <span>Continuar</span>
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -56,16 +56,12 @@ export default {
     }
   },
 
+  props: {
+    eventoId: Number
+  },
+
   created() {
-    this.desaparecidoForm = {
-      nome: null,
-      nascimento: null,
-      detalhes: null,
-      avatar: {
-        src: null,
-        type: null
-      }
-    },
+    this.resetData();
     this.avatarLoaded = false;
   },
 
@@ -74,6 +70,17 @@ export default {
       this.desaparecidoForm.avatar = {
         src: null,
         type: null
+      }
+    },
+    resetData() {
+      this.desaparecidoForm = {
+        nome: null,
+        nascimento: null,
+        detalhes: null,
+        avatar: {
+          src: null,
+          type: null
+        }
       }
     },
 
@@ -95,6 +102,10 @@ export default {
 			}
       this.$refs.sendPicture.value=null;
 		},
+
+    addDesaparecido() {
+      
+    }
   },
 
   components: {

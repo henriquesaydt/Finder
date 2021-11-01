@@ -80,6 +80,13 @@ router.get('/', authorization, async (req, res) => {
         }
       });
     }
+    else if (req.query.eventoId) {
+      rows = await prisma.desaparecido.findMany({
+        where: {
+          eventoId: parseInt(req.query.eventoId)
+        }
+      });
+    }
     else {
       rows = await prisma.desaparecido.findMany();
     }
@@ -87,7 +94,9 @@ router.get('/', authorization, async (req, res) => {
       return res.json(rows);
     }
   }
-  catch (err) {}
+  catch (err) {
+    console.log(err);
+  }
   return res.status(500).json({
     status: "error",
     message: "Não foi possível obter esse recurso"

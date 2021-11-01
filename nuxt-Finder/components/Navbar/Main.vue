@@ -47,15 +47,16 @@
         </template>
       </MjPopover>
 
-      <MjButton class="text-white" variant="secondary" @click="$refs.modalLogin.$refs.modal.open()">
+      <MjButton v-else class="text-white" variant="secondary" @click="loginWindow">
         Login
       </MjButton>
-
-      <NavbarLoginModal ref="modalLogin" @register="$refs.modalLogin.$refs.modal.close(); $refs.modalRegister.$refs.modal.open()"/>
-
-      <NavbarRegisterModal ref="modalRegister"/>
       
     </div>
+
+    <NavbarLoginModal ref="modalLogin" @register="$refs.modalLogin.$refs.modal.close(); $refs.modalRegister.$refs.modal.open()"/>
+
+    <NavbarRegisterModal ref="modalRegister"/>
+
   </nav>
 </template>
 
@@ -77,6 +78,10 @@ export default {
   },
 
   methods: {
+    loginWindow() {
+      this.$refs.modalLogin.$refs.modal.open();
+    },
+
     async userLogout() {
       try {
         let response = await this.$auth.logout();

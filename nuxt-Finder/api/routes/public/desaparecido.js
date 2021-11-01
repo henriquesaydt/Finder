@@ -5,18 +5,18 @@ const prisma = new PrismaClient();
 
 router.get('/', async (req, res) => {
   try {
-    var rows = await prisma.evento.findMany({
+    var rows = await prisma.desaparecido.findMany({
       where: {
-        ativo: true
+        eventoId: parseInt(req.query.eventoId)
       }
     });
-    for (var evento of rows) {
-      const desaparecidos = await prisma.desaparecido.findMany({
+    for (var desaparecido of rows) {
+      const pessoa = await prisma.pessoa.findUnique({
         where: {
-          eventoId: evento.id
+          id: desaparecido.id
         }
       });
-      evento.desaparecidos = desaparecidos
+      desaparecido.pessoa = pessoa;
     }
     res.status(200).json(rows);
   } 

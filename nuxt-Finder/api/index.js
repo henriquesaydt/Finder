@@ -19,6 +19,7 @@ const routerCaracteristica = require('./routes/caracteristica');
 const routerRegister = require('./routes/registrar');
 //Rotas Públicas
 const routerPublicEvento = require('./routes/public/evento');
+const routerPublicDesaparecido = require('./routes/public/desaparecido');
 
 app.use(cors());
 app.use(express.json());
@@ -172,6 +173,7 @@ app.use('/caracteristica', verifyJWT, routerCaracteristica);
 //----------- Rotas Públicas -------------
 app.use('/register', routerRegister);
 app.use('/public/evento', routerPublicEvento);
+app.use('/public/desaparecido', routerPublicDesaparecido);
 
 export default {
   path: '/api',
