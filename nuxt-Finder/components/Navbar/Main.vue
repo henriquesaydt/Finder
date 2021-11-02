@@ -16,9 +16,9 @@
         </a>
 
         <div class="hidden md:flex items-center space-x-7 text-2xl font-medium">
-          <a href="#" class="text-white border-b-2 border-transparent hover:border-white">
+          <button type="button" @click="$emit('eventoSelecionado', null); $emit('eventoWindow', 0)" href="#" class="text-white font-medium border-b-2 border-transparent hover:border-white">
             Início
-          </a>
+          </button>
           <a href="#" class="text-white border-b-2 border-transparent hover:border-white">
             Sobre
           </a>
@@ -39,9 +39,11 @@
         </div>
         <template #content>
           <MjPopoverContainer class="p-2 sm:w-48">
+            <!--
             <MjPopoverItem class="hover:bg-gray-200">Meu perfil</MjPopoverItem>
             <MjDivider class="my-2" />
-            <MjPopoverItem class="hover:bg-gray-200">Alterar Senha</MjPopoverItem>
+            -->
+            <MjPopoverItem @click="$refs.modalSenha.open()" class="hover:bg-gray-200">Alterar Senha</MjPopoverItem>
             <MjPopoverItem @click="userLogout" class="hover:bg-gray-200">Sair</MjPopoverItem>
           </MjPopoverContainer>
         </template>
@@ -56,6 +58,8 @@
     <NavbarLoginModal ref="modalLogin" @register="$refs.modalLogin.$refs.modal.close(); $refs.modalRegister.$refs.modal.open()"/>
 
     <NavbarRegisterModal ref="modalRegister"/>
+
+    <NavbarUserSenha ref="modalSenha"/>
 
   </nav>
 </template>

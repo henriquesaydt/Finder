@@ -74,6 +74,17 @@ export default {
     this.$axios.get('/api/public/evento')
     .then((res) => {
       this.listaEventos = res.data;
+      var listaCoordenadas = [];
+      res.data.forEach((evento) => {
+        listaCoordenadas.push({
+          center: {
+            lat: parseInt(evento.localidade_x),
+            lng: parseInt(evento.localidade_y)
+          },
+          radius: evento.localidade_r
+        })
+      });
+      this.$emit('listaCoordenadas', listaCoordenadas);
     })
     .catch((err) => {
       console.log("Não foi possível obter a lista de eventos");

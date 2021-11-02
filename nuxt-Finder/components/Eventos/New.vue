@@ -144,6 +144,10 @@ export default {
         }
       }
       return isValid;
+    },
+
+    editing() {
+      console.log("aki");
     }
   },
 

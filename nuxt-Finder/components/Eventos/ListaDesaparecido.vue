@@ -30,7 +30,7 @@
           </MjListItem>
         </MjList>
         <div class="flex justify-center space-x-8 pt-5">
-          <MjButton @click="$emit('eventoWindow', 1)" class=" text-base lg:px-2 2xl:px-5" variant="secondary">
+          <MjButton @click="eventoAtivo?$emit('eventoWindow', 0):$emit('eventoWindow', 1)" class=" text-base lg:px-2 2xl:px-5" variant="secondary">
             <div class="flex space-x-2 items-center">
               <span>Cancelar</span>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -81,7 +81,8 @@ export default {
   },
 
   props: {
-    eventoId: Number
+    eventoId: Number,
+    eventoAtivo: Boolean,
   },
 
   methods: {

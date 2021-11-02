@@ -1,7 +1,10 @@
 <template>
     <div class="flex flex-col h-screen" style="background-color:#2E4059">
 
-      <NavbarMain ref="navbar"/>
+      <NavbarMain ref="navbar" 
+        @eventoWindow="eventoWindow=$event" 
+        @eventoSelecionado="eventoSelecionado=$event"
+      />
 
       <div class="flex pEventosMapa">
         <!-- EVENTOS -->
@@ -9,6 +12,7 @@
           <EventosListaDesaparecido class="h-full" v-if="eventoWindow == 2"
             @eventoWindow="eventoWindow=$event" 
             :eventoId="eventoId"
+            :eventoAtivo="eventoSelecionado.ativo"
           />
           <EventosNew class="h-full" v-else-if="eventoWindow == 1" 
             @eventoWindow="eventoWindow=$event" 
@@ -20,10 +24,15 @@
             @eventoWindow="eventoWindow=$event" 
             @loginWindow="$refs.navbar.loginWindow()"
             @eventoSelecionado="eventoSelecionado=$event"
+            @listaCoordenadas="listaCoordenadas=$event"
           />
         </div>
         <!-- MAPA -->
-        <GoogleMap class="w-full teste" :raio="raioSelected" @positionSelected="positionSelected=$event"/>
+        <GoogleMap ref="mapa" class="w-full teste" 
+        :editing="editingMap"
+        :raio="raioSelected"
+        :listaCoordenadas="listaCoordenadas"
+        @positionSelected="positionSelected=$event"/>
       </div>
       <!-- Descrição do Evento -->
       <div v-if="eventoSelecionado" class="flex-none" style="background-color: #2E4059">
@@ -39,7 +48,7 @@
               </p>
             </div>
             <div class="flex space-x-5 items-end">
-              <MjButton class=" text-base pl-3" variant="secondary">
+              <MjButton @click="eventoId=eventoSelecionado.id;eventoWindow=2" class=" text-base pl-3" variant="secondary">
                 <div class="flex items-center space-x-2">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -47,7 +56,8 @@
                   <span>Adicionar</span>
                 </div>
               </MjButton>
-              <MjButton class=" text-base pl-3" variant="secondary">
+              <!--
+              <MjButton @click="eventoId=eventoSelecionado.id;eventoWindow=1" class=" text-base pl-3" variant="secondary">
                 <div class="flex items-center space-x-2">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -55,6 +65,7 @@
                   <span>Editar</span>
                 </div>
               </MjButton>
+              -->
             </div>
           </div>
         </div>
@@ -104,6 +115,18 @@ export default {
         lat: null,
         lng: null
       },
+      listaCoordenadas: []
+    }
+  },
+
+  computed: {
+    editingMap() {
+      if (this.eventoWindow == 1) {
+        return true;
+      }
+      else {
+        return false;
+      }
     }
   },
 
@@ -118,14 +141,15 @@ export default {
 
   watch: {
     eventoSelecionado: function (val) {
-      this.$axios.get('/api/public/desaparecido?eventoId='+val.id)
-      .then((res) => {
-        this.listaDesaparecidos = res.data;
-        console.log(this.listaDesaparecidos);
-      })
-      .catch(() => {
-        this.$refs.toast.error('Um erro inesperado ocorreu ao carregar o evento, por favor, tente novamente.');
-      });
+      if (val) {
+        this.$axios.get('/api/public/desaparecido?eventoId='+val.id)
+        .then((res) => {
+          this.listaDesaparecidos = res.data;
+        })
+        .catch(() => {
+          this.$refs.toast.error('Um erro inesperado ocorreu ao carregar o evento, por favor, tente novamente.');
+        });
+      }
     }
   },
 

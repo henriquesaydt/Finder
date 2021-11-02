@@ -1,5 +1,5 @@
 <template>
-  <div id="map"> 
+  <div id="map">
   </div>
 </template>
 
@@ -13,12 +13,15 @@ export default {
       map: null,
       circuloShape: null,
       marker: null,
-      editing: true,
+      circulos: [],
+      coordinates: [],
     }
   },
 
   props: {
-    raio: Number
+    raio: Number,
+    editing: Boolean,
+    listaCoordenadas: Array
   },
 
   mounted() {
@@ -102,8 +105,6 @@ export default {
         stylers: [{ color: "#17263c" }],
       },
     ]
-    var map;
-    var circulo;
     const loader = new Loader({
       apiKey: "AIzaSyBTdy4W_VdsPyuVFyX6GBmZEtbCzGh3sgI",
       version: "weekly"
@@ -115,7 +116,37 @@ export default {
         streetViewControl: false,
         styles: mapStyle
       });
+      this.setCircles();
+    });
+  },
+  watch: {
+    raio: function (val) {
       if (this.editing) {
+        if (this.circuloShape != null) this.circuloShape.setMap(null);
+        if (this.editing) {
+          if (this.circuloShape != null) this.circuloShape.setMap(null);
+          this.circuloShape = new google.maps.Circle({
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "#FF0000",
+            fillOpacity: 0.35,
+            map: this.map,
+            center: this.positionSelected,
+            radius: val,
+          });
+          this.circuloShape.setMap(this.map);
+        }
+      }
+    },
+    editing: function (val) {
+      if (!val) {
+        this.setCircles();
+        google.maps.event.clearInstanceListeners(this.map)
+        this.clearMarkers();
+      }
+      else {
+        this.unsetCircles();
         this.map.addListener('click', (event) => {
           this.clearMarkers();
           this.marker = new google.maps.Marker({
@@ -137,30 +168,6 @@ export default {
           this.circuloShape.setMap(this.map);
         });
       }
-    });
-  },
-  watch: {
-    raio: function (val) {
-      if (this.circuloShape != null) this.circuloShape.setMap(null);
-      if (this.editing) {
-        if (this.circuloShape != null) this.circuloShape.setMap(null);
-        this.circuloShape = new google.maps.Circle({
-          strokeColor: "#FF0000",
-          strokeOpacity: 0.8,
-          strokeWeight: 2,
-          fillColor: "#FF0000",
-          fillOpacity: 0.35,
-          map: this.map,
-          center: this.positionSelected,
-          radius: val,
-        });
-        this.circuloShape.setMap(this.map);
-      }
-    },
-    editing: function (val) {
-      if (!val) {
-        this.clearMarkers();
-      }
     }
   },
 
@@ -168,6 +175,27 @@ export default {
     clearMarkers() {
       if (this.circuloShape != null) this.circuloShape.setMap(null);
       if (this.marker != null) this.marker.setMap(null);
+    },
+
+    setCircles() {
+      for (const city in this.listaCoordenadas) {
+        const cityCircle = new google.maps.Circle({
+          strokeColor: "#FF0000",
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: "#FF0000",
+          fillOpacity: 0.35,
+          map: this.map,
+          center: this.listaCoordenadas[city].center,
+          radius: this.listaCoordenadas[city].radius,
+        });
+        this.circulos.push(cityCircle);
+      }
+    },
+    unsetCircles() {
+      this.circulos.forEach((circulo) => {
+        circulo.setMap(null);
+      })
     }
   }
 }

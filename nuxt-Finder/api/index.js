@@ -162,6 +162,48 @@ app.get('/auth/logout', verifyJWT, async (req, res, next) => {
   return res.status(500).json({message: "Não foi possível concluir o logout"});
 });
 
+app.post('/auth/change-password', verifyJWT, async (req, res, next) => {
+  if (req.body.senhaAtual && req.body.novaSenha && req.body.novaSenhaRepeat) {
+    try {
+      const user = await prisma.user.findUnique({
+        where: {
+          id: req.token.userId
+        }
+      });
+      const passValid = await argon2.verify(user.password, req.body.senhaAtual);
+      if (passValid && (req.body.novaSenha == req.body.novaSenhaRepeat)) {
+        const updatedUser = await prisma.user.update({
+          where: {
+            id: req.token.userId
+          },
+          data: {
+            password: await argon2.hash(req.body.novaSenha),
+          }
+        });
+        if (updatedUser) {
+          return res.status(200).json({
+            status: "success",
+            message: "Senha alterada com sucesso"
+          });
+        }
+      }
+    }
+    catch (err) {
+      console.log(err);
+    }
+    return res.status(500).json({
+      status: "error",
+      message: "Ocorreu um erro ao alterar a senha desse usuário"
+    });
+  }
+  else {
+    return res.status(400).json({
+      status: "error",
+      message: "Parâmetros inválidos"
+    })
+  }
+});
+
 //--------- Rotas Autenticadas -----------
 app.use('/pessoa', verifyJWT, routerPessoa);
 app.use('/animal', verifyJWT, routerAnimal);
