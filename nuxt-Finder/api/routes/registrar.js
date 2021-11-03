@@ -41,10 +41,18 @@ router.post('/', upload.single('upload'), async (req, res) => {
           data: newUser
         });
         if (user) {
-          return res.status(200).json({
-            stauts: "success",
-            message: "Usuário cadastrado com sucesso"
-          })
+          var userGrupo = await prisma.grupoUsuario.create({
+            data: {
+              userId: user.id,
+              grupoId: 3
+            }
+          });
+          if (userGrupo) {
+            return res.status(200).json({
+              stauts: "success",
+              message: "Usuário cadastrado com sucesso"
+            })
+          }
         }
       }
     }
