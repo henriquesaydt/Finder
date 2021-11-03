@@ -20,6 +20,7 @@ const routerRegister = require('./routes/registrar');
 //Rotas Públicas
 const routerPublicEvento = require('./routes/public/evento');
 const routerPublicDesaparecido = require('./routes/public/desaparecido');
+const routerPublicEncontrado = require('./routes/public/encontrado');
 
 app.use(cors());
 app.use(express.json());
@@ -216,6 +217,7 @@ app.use('/caracteristica', verifyJWT, routerCaracteristica);
 app.use('/register', routerRegister);
 app.use('/public/evento', routerPublicEvento);
 app.use('/public/desaparecido', routerPublicDesaparecido);
+app.use('/public/encontrado', routerPublicEncontrado)
 
 export default {
   path: '/api',

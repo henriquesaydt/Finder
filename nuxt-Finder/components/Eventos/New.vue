@@ -108,8 +108,6 @@ export default {
 
     createEvento() {
       if (this.formValid()) {
-        this.eventoForm.localidade_x = this.positionSelected.lat.toString();
-        this.eventoForm.localidade_y = this.positionSelected.lng.toString();
         this.eventoForm.localidade_r = parseInt(this.eventoForm.localidade_r);
         this.eventoForm.data = new Date(this.eventoForm.data).toISOString();
         this.$axios.post('/api/evento', this.eventoForm)
@@ -128,12 +126,12 @@ export default {
 
     formValid() {
       if (this.positionSelected) {
-        this.eventoForm.localidade_x = this.positionSelected.lat;
-        this.eventoForm.localidade_y = this.positionSelected.lng;
+        this.eventoForm.localidade_x = this.positionSelected.lat.toString();;
+        this.eventoForm.localidade_y = this.positionSelected.lng.toString();;
       }
       console.log(this.eventoForm);
       var isValid = true;
-      const requiredFields = ['nome', 'descricao', 'data', 'cidade', 'uf', 'localidade_x', 'localidade_y'];
+      const requiredFields = ['nome', 'descricao', 'data', 'cidade', 'uf'];
       for (let field of requiredFields) {
         if (this.eventoForm[field] == null || this.eventoForm[field] == '') {
           isValid = false;
