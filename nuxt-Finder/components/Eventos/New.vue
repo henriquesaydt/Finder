@@ -129,7 +129,6 @@ export default {
         this.eventoForm.localidade_x = this.positionSelected.lat.toString();;
         this.eventoForm.localidade_y = this.positionSelected.lng.toString();;
       }
-      console.log(this.eventoForm);
       var isValid = true;
       const requiredFields = ['nome', 'descricao', 'data', 'cidade', 'uf'];
       for (let field of requiredFields) {
@@ -143,10 +142,6 @@ export default {
       }
       return isValid;
     },
-
-    editing() {
-      console.log("aki");
-    }
   },
 
   created() {

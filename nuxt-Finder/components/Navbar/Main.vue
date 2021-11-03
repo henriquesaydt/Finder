@@ -83,7 +83,6 @@ export default {
     async userLogout() {
       try {
         let response = await this.$auth.logout();
-        console.log(response);
       }
       catch (err) {
         console.log(err);

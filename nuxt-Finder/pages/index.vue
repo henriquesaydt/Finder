@@ -28,7 +28,7 @@
         />
       </div>
       <!-- MAPA -->
-      <div class="bg-red-200 hidden md:flex flex-1">
+      <div class="hidden md:flex flex-1">
         <GoogleMap ref="mapa" class="w-full h-full" 
           :editing="editingMap"
           :raio="raioSelected"
