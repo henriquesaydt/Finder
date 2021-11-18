@@ -12,7 +12,7 @@
         <EventosListaDesaparecido class="h-full" v-if="eventoWindow == 2"
           @eventoWindow="eventoWindow=$event" 
           :eventoId="eventoId"
-          :eventoAtivo="eventoSelecionado.ativo"
+          :eventoAtivo="eventoSelecionado?eventoSelecionado.ativo:null"
         />
         <EventosNew class="h-full" v-else-if="eventoWindow == 1" 
           @eventoWindow="eventoWindow=$event" 

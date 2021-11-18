@@ -19,7 +19,9 @@
             </div>
             <div class="flex flex-col items-start text-white">
               <div class="flex items-center">
-                <MjStatusDot :status="todosEncontrados(evento.id) ? 'success' : 'warning'"/>
+                <div>
+                  <MjStatusDot :status="todosEncontrados(evento.id) ? 'success' : 'warning'"/>
+                </div>
                 <span class="font-medium text-lg 2xl:text-xl ml-2 pb-1" style="text-align: left">{{ evento.nome }}</span><br>
               </div>
               <div class="flex">
@@ -78,8 +80,8 @@ export default {
       res.data.forEach((evento) => {
         listaCoordenadas.push({
           center: {
-            lat: parseInt(evento.localidade_x),
-            lng: parseInt(evento.localidade_y)
+            lat: parseFloat(evento.localidade_x),
+            lng: parseFloat(evento.localidade_y)
           },
           radius: evento.localidade_r
         })

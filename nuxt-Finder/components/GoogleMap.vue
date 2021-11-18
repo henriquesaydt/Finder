@@ -179,6 +179,7 @@ export default {
 
     setCircles() {
       for (const city in this.listaCoordenadas) {
+        console.log(this.listaCoordenadas);
         const cityCircle = new google.maps.Circle({
           strokeColor: "#FF0000",
           strokeOpacity: 0.8,
