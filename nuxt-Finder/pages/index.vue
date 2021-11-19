@@ -82,7 +82,7 @@
             <div class="flex flex-col justify-between space-y-2">
               <div>
                 <span class="text-lg md:text-xl font-medium">
-                  {{ desaparecido.pessoa.nome }}<span v-if="desaparecido.pessoa.nascimento">, {{new Date(desaparecido.pessoa.nascimento.getFullYear())}} anos</span>
+                  {{ desaparecido.pessoa.nome }}<span v-if="desaparecido.pessoa.nascimento">, {{ idade(desaparecido.pessoa.nascimento) }} anos</span>
                 </span>
               </div>
               <div>
@@ -167,6 +167,11 @@ export default {
       .catch(() => {
         this.$refs.toast.error('Um erro inesperado ocorreu ao carregar o evento, por favor, tente novamente.');
       });
+    },
+
+    idade(nascimento) {
+      var nasc = +new Date(nascimento);
+      return ~~((Date.now() - nasc) / (31557600000));
     }
   },
 
