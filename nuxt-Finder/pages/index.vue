@@ -13,9 +13,10 @@
           @eventoWindow="eventoWindow=$event" 
           :eventoId="eventoId"
           :eventoAtivo="eventoSelecionado?eventoSelecionado.ativo:null"
+          :podeRemover="podeRemoverDesaparecido"
         />
         <EventosNew class="h-full" v-else-if="eventoWindow == 1" 
-          @eventoWindow="eventoWindow=$event" 
+          @eventoWindow="eventoWindow=$event;eventoWindow == 2 ? podeRemoverDesaparecido = true : podeRemoverDesaparecido = false" 
           @raio="raioSelected=$event" 
           @eventoId="eventoId=$event"
           :positionSelected="positionSelected" 
@@ -52,7 +53,7 @@
             </p>
           </div>
           <div class="flex space-x-5 items-end">
-            <MjButton @click="eventoId=eventoSelecionado.id;eventoWindow=2" class="w-full md:w-auto text-base pl-3" variant="secondary">
+            <MjButton @click="eventoId=eventoSelecionado.id;podeRemover=false;eventoWindow=2" class="w-full md:w-auto text-base pl-3" variant="secondary">
               <div class="flex items-center space-x-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -136,7 +137,8 @@ export default {
         lat: null,
         lng: null
       },
-      listaCoordenadas: []
+      listaCoordenadas: [],
+      podeRemoverDesaparecido: false,
     }
   },
 

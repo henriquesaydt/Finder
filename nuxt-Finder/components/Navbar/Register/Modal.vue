@@ -5,6 +5,7 @@
       <form class="flex flex-col space-y-3 py-3 lg:w-3/5 lg:mx-auto font-medium">
 
         <InputForm v-bind:value.sync="registerForm.nome" title="Nome Completo" type="text"/>
+        <InputForm v-bind:value.sync="registerForm.email" title="E-mail" type="text"/>
         <InputForm v-bind:value.sync="registerForm.nascimento" title="Data de Nascimento" type="date"/>
         <InputForm v-bind:value.sync="registerForm.username" title="Nome de Usuário" type="text"/>
         <InputForm v-bind:value.sync="registerForm.password" title="Senha" type="password"/>
@@ -122,6 +123,7 @@ export default {
       this.registerForm = {
         nome: null,
         nascimento: null,
+        email: null,
         username: null,
         password: null,
         passwordRepeat: null,

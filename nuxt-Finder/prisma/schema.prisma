@@ -148,7 +148,8 @@ model User {
   pessoaId Int
   ativo Boolean @default(true)
   username String @unique
-  password String
+  password String 
+  email String @default("")
   flags Int @default(0)
   avatar String @default("none.png")
   tokenWhiteList TokenWhiteList[]

@@ -1,7 +1,7 @@
 export default {
   server: {
     host: '0.0.0.0',
-    port: 3000
+    port: 1234
   },
 
   serverMiddleware: [
@@ -51,7 +51,9 @@ export default {
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
+  axios: {
+    baseURL: ''
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
