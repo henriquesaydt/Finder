@@ -59,17 +59,23 @@ router.post('/', upload.single('upload'), async (req, res) => {
     catch (err) {
       console.log(err);
     }
-    fs.unlinkSync('static/public/profile-picture/' + req.file.filename);
+    clearPicture(req.file);
     return res.status(500).json({
       status: "error",
       message: "Não foi possível cadastrar esse usuário"
     });
   }
-  fs.unlinkSync('static/public/profile-picture/' + req.file.filename);
+  clearPicture(req.file);
   return res.status(400).json({
     status: "error",
     message: "Parâmetros inválidos"
   });
 });
+
+function clearPicture(file) {
+  if (file) {
+    fs.unlinkSync('static/public/profile-picture/' + file.filename);
+  }
+}
 
 module.exports = router;
