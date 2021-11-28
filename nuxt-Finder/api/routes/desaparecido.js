@@ -200,18 +200,24 @@ router.post('/:desaparecidoId/picture', authorization, upload.single('upload'), 
     catch (err) {
       console.log(err);
     }
-    fs.unlinkSync('static/public/desaparecido-picture/' + req.file.filename);
+    clearPicture(req.file);
     return res.status(500).json({
       status: "error",
       message: "Não foi possível atualizar a foto dessa pessoa"
     });
   }
-  fs.unlinkSync('static/public/desaparecido-picture/' + req.file.filename);
+  clearPicture(req.file);
   return res.status(400).json({
     status: "error",
     message: "Parâmetros inválidos"
   });
 });
+
+function clearPicture(file) {
+  if (file) {
+    fs.unlinkSync('static/public/profile-picture/' + file.filename);
+  }
+}
 
 router.delete('/', authorization, async (req, res) => {
   if (req.body.id) {

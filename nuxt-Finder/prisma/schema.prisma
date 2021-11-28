@@ -3,7 +3,7 @@
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://root:0147@localhost:3306/Finder"
+  url      = "mysql://lhs:0147@localhost:3306/Finder"
 }
 
 generator client {
