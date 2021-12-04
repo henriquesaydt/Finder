@@ -146,6 +146,7 @@ export default {
 
   created() {
     this.resetData();
+    this.$emit('raio', 50000);
   }
 }
 </script>

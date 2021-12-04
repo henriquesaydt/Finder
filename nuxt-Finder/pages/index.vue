@@ -144,11 +144,11 @@ export default {
 
   computed: {
     editingMap() {
-      if (this.eventoWindow == 1) {
-        return true;
+      if (this.eventoWindow == 0) {
+        return false;
       }
       else {
-        return false;
+        return true;
       }
     }
   },

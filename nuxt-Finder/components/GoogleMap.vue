@@ -15,6 +15,7 @@ export default {
       marker: null,
       circulos: [],
       coordinates: [],
+      mapLoaded: false,
     }
   },
 
@@ -116,6 +117,7 @@ export default {
         streetViewControl: false,
         styles: mapStyle
       });
+      this.mapLoaded = true;
       this.setCircles();
     });
   },
@@ -168,6 +170,11 @@ export default {
           this.circuloShape.setMap(this.map);
         });
       }
+    },
+    listaCoordenadas: function () {
+      if (this.mapLoaded) {
+        this.setCircles();
+      }
     }
   },
 
@@ -178,6 +185,9 @@ export default {
     },
 
     setCircles() {
+      if (this.circulos.length > 0) {
+        this.unsetCircles();
+      }
       for (const city in this.listaCoordenadas) {
         console.log(this.listaCoordenadas);
         const cityCircle = new google.maps.Circle({

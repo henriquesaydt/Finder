@@ -52,7 +52,9 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: 'http://192.168.254.213:1234'
+    //baseURL: 'http://192.168.254.213:1234'
+    //baseURL: 'http://localhost:1234'
+    baseURL: 'http://luizlhs.ddns.net:1234'
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build

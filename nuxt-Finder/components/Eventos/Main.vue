@@ -13,8 +13,11 @@
     </div>
     <div class="flex flex-col space-y-5 p-4 lg:pl-4 2xl:pl-8 pt-0 mt-2 overflow-auto h-full barra">
       <div v-for="evento in listaEventos" :key="evento.id">
-        <button class="w-full" @click="$emit('eventoSelecionado', evento)" type="button">
+        <button class="w-full" @click="eventoSelecionadoID = evento.id; $emit('eventoSelecionado', evento)" type="button">
           <div class="flex space-x-5">
+            <!-- Barra indicadora -->
+            <div v-show="eventoSelecionadoID == evento.id" class="bg-white w-1">
+            </div>
             <div class="flex flex-col items-start text-white">
               <div class="flex items-center">
                 <div>
@@ -41,6 +44,7 @@ export default {
   data() {
     return {
       listaEventos: [],
+      eventoSelecionadoID: 0
     }
   },
 
@@ -72,21 +76,20 @@ export default {
   async created() {
     this.$axios.get('/api/public/evento')
     .then((res) => {
-      console.log("then 1");
       this.listaEventos = res.data;
       var listaCoordenadas = [];
-      console.log("then 2");
       res.data.forEach((evento) => {
-        listaCoordenadas.push({
-          center: {
-            lat: parseFloat(evento.localidade_x),
-            lng: parseFloat(evento.localidade_y)
-          },
-          radius: evento.localidade_r
-        })
+        if (!this.todosEncontrados(evento.id)) {
+          listaCoordenadas.push({
+            center: {
+              lat: parseFloat(evento.localidade_x),
+              lng: parseFloat(evento.localidade_y)
+            },
+            radius: evento.localidade_r
+          })
+        }
       });
       this.$emit('listaCoordenadas', listaCoordenadas);
-      console.log("then 3");
     })
     .catch((err) => {
       console.log(err);
